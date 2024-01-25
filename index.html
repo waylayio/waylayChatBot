@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Waylay BOT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+  <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.min.css'>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="cover"></div>
+<div class="container">
+  <div class="row" id="formConnect">
+    <div class="col-md-6 offset-md-3">
+      <div class="card my-5">
+        <div class="card-body cardbody-color p-lg-5">
+          <div class="text-center">
+            <img src="https://global-uploads.webflow.com/600af1353f91b9eff1de3e74/614ae65291c6d045b3140bea_OTO%20Logo.png" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+            width="200px" alt="profile">
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="user" aria-describedby="emailHelp"
+            placeholder="User Name">
+          </div>
+          <div class="mb-3">
+            <input type="password" class="form-control" id="pwd" placeholder="password">
+          </div>
+          <div class="mb-3">
+            <input type="text" class="form-control" id="domain" aria-describedby="domain"
+            placeholder="Domain">
+          </div>
+          <div class="text-center"><button type="submit" class="btn-primary btn-block btn-lg" id="btnFormConnect">Login</button></div>
+          <div class="login-error"> <span>Incorrect credentials</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="app" class="chat">
+  <div class="chat-title">
+    <h1>Waylay bot</h1>
+    <h2>WOX</h2>
+    <figure class="avatar">
+      <img src="https://assets-global.website-files.com/600af1353f91b9eff1de3e74/6422ab2c2bcdd3fb25324cfb_TinyAutomator-p-500.png" /></figure>
+  </div>
+  <div class="messages">
+    <div class="messages-content"></div>
+  </div>
+  <div class="message-box">
+    <textarea type="text" class="message-input" placeholder="Type message..."></textarea>
+    <button type="submit" id="record" class ="message-submit"><i class="fa-solid fa-microphone"></i></button>
+    <!-- <button type="submit" class="message-submit">➽</button> -->
+  </div>
+
+</div>
+<div class="bg"></div>
+<script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.concat.min.js'></script>
+<script  src="js/config.js"></script>
+<script  src="js/script.js"></script>
+
+</body>
+</html>
