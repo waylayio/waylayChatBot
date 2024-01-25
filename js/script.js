@@ -114,8 +114,9 @@ function insertMessage(message) {
 
     $('.message-input').val(null);
     updateScrollbar();
+    const occurancy = msg.split(" ").filter(w => ['search','look for','find','task'].includes(w)).length
 
-    if (msg.indexOf('find me the task') != -1) {
+    if (occurancy > 1) {
       client.tasks.list({ status: "running" }).then(tasks => {
         tasks.forEach(function (task) {
           if (msg.toLowerCase().indexOf(task.name) != -1) {
