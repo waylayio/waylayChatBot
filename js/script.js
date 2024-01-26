@@ -43,6 +43,7 @@ async function login(ops) {
   WAYLAY_BOT = await client.vault.get("WAYLAY_BOT").catch(err=>{})
   OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY")
   botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
+  slackBot = await client.sensors.get("slackPostMessage")
 
   formConnect.hide()
   app.show()
@@ -116,6 +117,7 @@ async function insertMessage(message) {
     $('.message-input').val(null);
     updateScrollbar();
     const occurancy = msg.split(" ").filter(w => ['search','look for','find','task'].includes(w)).length
+    const slackMessage = msg.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
 
     var found = false
     if (occurancy > 1) {
@@ -132,6 +134,19 @@ async function insertMessage(message) {
       if(!found){
         replyMessage('task not found')
       }
+    } else if (slackMessage > 1) {
+      var channel = config.channel || "bot"
+      client.sensors.execute(slackBot.name, slackBot.version, {
+        properties: {
+          channel,
+          text: config.lastMessage
+        }
+      }).then(response => {
+        replyMessage("message forwarded to " + channel)
+      }).catch(error => {
+        replyMessage(JSON.stringify(error));
+      })
+
     } else {
       const id = msg.split(" ").find(t => t.length === 36) || config.entityId
 
@@ -149,7 +164,8 @@ async function insertMessage(message) {
           entityId: id
         }
       }).then(response => {
-        replyMessage(response.rawData.response || response.rawData.error);
+        config.lastMessage = response.rawData.response || response.rawData.error
+        replyMessage(config.lastMessage)
       }).catch(error => {
         replyMessage(JSON.stringify(error));
       })
