@@ -8,6 +8,32 @@ const $messages = $('.messages-content')
 const connectButton = $('#btnFormConnect')
 const logoutButton = $('#logout')
 
+class FIFOBuffer {
+  constructor(maxSize) {
+    this.maxSize = maxSize;
+    this.buffer = [];
+  }
+
+  push(item) {
+    this.buffer.push(item);
+    if (this.buffer.length > this.maxSize) {
+      this.buffer.shift();
+    }
+  }
+  getBuffer() {
+    return this.buffer;
+  }
+
+  getLatestValue() {
+    if (this.buffer.length === 0) {
+      return null;
+    }
+    return this.buffer[this.buffer.length - 1];
+  }
+}
+
+
+
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 const SpeechGrammarList =
@@ -17,6 +43,8 @@ const SpeechRecognitionEvent =
 
 const recognition = new SpeechRecognition();
 const speechRecognitionList = new SpeechGrammarList();
+const myBuffer = new FIFOBuffer(100)
+
 
 var minutues, client, OPENAI_API_KEY, WAYLAY_BOT
 
@@ -123,7 +151,7 @@ async function insertMessage(message) {
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
           channel,
-          text: config.lastMessage
+          text: myBuffer.lastMessage
         }
       }).then(response => {
         replyMessage("message forwarded to " + channel + " channel")
@@ -134,14 +162,16 @@ async function insertMessage(message) {
       client.sensors.execute(botSensor.name, botSensor.version, {
         properties: {
           question: msg,
-          messages: config.lastMessages,
+          messages: myBuffer.getBuffer(),
           openAIModel : config.openAIModel || 'gpt-3.5-turbo-1106',
           openAIKey: OPENAI_API_KEY
         }
       }).then(response => {
-        config.lastMessages = response.rawData.messages
-        config.lastMessage = config.lastMessages.length > 1 ? config.lastMessages[config.lastMessages.length-1].content : "no answer, please try another question"
-        replyMessage(config.lastMessage)
+        if(response.rawData.messages.length > 1) {
+          myBuffer.push(response.rawData.messages[response.rawData.messages.length-1])
+        }
+        myBuffer.lastMessage = myBuffer.getLatestValue() ?  myBuffer.getLatestValue().content : "no answer, please try another question"
+        replyMessage(myBuffer.lastMessage)
       }).catch(error => {
         replyMessage(JSON.stringify(error));
       })
