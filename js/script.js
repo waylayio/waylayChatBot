@@ -117,10 +117,11 @@ function insertMessage(message) {
     const occurancy = msg.split(" ").filter(w => ['search','look for','find','task'].includes(w)).length
 
     var found = false
-    if (occurancy > 1 && msg.indexOf('name') != -1) {
+    if (occurancy > 1) {
       client.tasks.list({ status: "running" }).then(tasks => {
         tasks.forEach(function (task) {
-          if (msg.toLowerCase().indexOf(task.name) != -1) {
+          var id = msg.split(" ").find(t => t.length === 36)
+          if (msg.toLowerCase().indexOf(task.name) != -1 || id === task.ID) {
             replyMessage(task.name + " : " + task.ID)
             config.entityId = task.ID
             found = true
