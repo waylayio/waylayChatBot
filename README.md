@@ -7,6 +7,12 @@ You can also do the same using the voice command
 * Wox plugn
 * Waylay account
 
+
+# Vault settings
+You will need to configure two settings in the vault:
+* OPENAI_API_KEY, this one is mandatory
+* WAYLAY_BOT, optional, if not present, you can configure it either via config settings, or it is the fixed name (WoxOpenAI)
+
 # Installing it in the console
 you can also add it to the Waylay Console APP and it will work, since it can also read the token from URL
 

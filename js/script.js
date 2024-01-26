@@ -18,7 +18,7 @@ const SpeechRecognitionEvent =
 const recognition = new SpeechRecognition();
 const speechRecognitionList = new SpeechGrammarList();
 
-var minutues, client, OPENAI_API_KEY
+var minutues, client, OPENAI_API_KEY, WAYLAY_BOT
 
 $.urlParam = function (name) {
   var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
@@ -40,8 +40,9 @@ async function login(ops) {
   }
 
   await client.withSettings()
-  botSensor = await client.sensors.get(config.bot || "WoxOpenAI")
+  WAYLAY_BOT = await client.vault.get("WAYLAY_BOT").catch(err=>{})
   OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY")
+  botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
 
   formConnect.hide()
   app.show()
