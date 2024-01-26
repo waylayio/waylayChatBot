@@ -116,25 +116,9 @@ async function insertMessage(message) {
 
     $('.message-input').val(null);
     updateScrollbar();
-    const occurancy = msg.split(" ").filter(w => ['search','look for','find','task'].includes(w)).length
     const slackMessage = msg.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
 
-    var found = false
-    if (occurancy > 1) {
-      await client.tasks.list({ status: "running" }).then(tasks => {
-        tasks.forEach(function (task) {
-          var id = msg.split(" ").find(t => t.length === 36)
-          if (msg.toLowerCase().indexOf(task.name.toLowerCase()) != -1 || id === task.ID) {
-            replyMessage(task.name + " : " + task.ID)
-            config.entityId = task.ID
-            found = true
-          }
-        })
-      })
-      if(!found){
-        replyMessage('task not found')
-      }
-    } else if (slackMessage > 1) {
+    if (slackMessage > 1) {
       var channel = config.channel || "bot"
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
@@ -146,25 +130,17 @@ async function insertMessage(message) {
       }).catch(error => {
         replyMessage(JSON.stringify(error));
       })
-
     } else {
-      const id = msg.split(" ").find(t => t.length === 36) || config.entityId
-
-      // const indexOfFirstTask = msg.indexOf("task");
-      // const indexOfFirstAlarm = msg.indexOf("alarm");
-      // if (indexOfFirstTask != -1) {
-      // } else if (indexOfFirstAlarm != -1) {
-      //   type = "Alarm"
-      // }
       client.sensors.execute(botSensor.name, botSensor.version, {
         properties: {
-          query: msg,
-          entityType: type,
-          OPENAI_API_KEY,
-          entityId: id
+          question: msg,
+          messages: config.lastMessages,
+          openAIModel : config.openAIModel || 'gpt-3.5-turbo-1106',
+          openAIKey: OPENAI_API_KEY
         }
       }).then(response => {
-        config.lastMessage = response.rawData.response || response.rawData.error
+        config.lastMessages = response.rawData.messages
+        config.lastMessage = config.lastMessages.length > 1 ? config.lastMessages[config.lastMessages.length-1].content : "no answer, please try another question"
         replyMessage(config.lastMessage)
       }).catch(error => {
         replyMessage(JSON.stringify(error));
