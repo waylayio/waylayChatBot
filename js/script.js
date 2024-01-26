@@ -32,8 +32,6 @@ class FIFOBuffer {
   }
 }
 
-
-
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 const SpeechGrammarList =
@@ -83,12 +81,12 @@ async function login(ops) {
   recognition.maxAlternatives = 1;
   recognition.custom_grammar = ['task', 'alarm']
 
-  client.tasks.list({ status: "running" }).then(tasks => {
-    tasks.forEach(function (task) {
-      config.entityId = task.ID
-      replyMessage(task.name + " : " + task.ID);
-    });
-  })
+  // client.tasks.list({ status: "running" }).then(tasks => {
+  //   tasks.forEach(function (task) {
+  //     config.entityId = task.ID
+  //     replyMessage(task.name + " : " + task.ID);
+  //   });
+  // })
 }
 
 connectButton.click(() => {
@@ -114,7 +112,7 @@ async function init() {
     formConnect.show()
   }
   $messages.mCustomScrollbar();
-  replyMessage("This is Waylay Bot, how can I help you?\nHere are some running tasks");
+  replyMessage("Hi, this is Waylay Bot, how can I help you?");
 }
 
 
