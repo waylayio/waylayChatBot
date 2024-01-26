@@ -116,7 +116,7 @@ function insertMessage(message) {
     updateScrollbar();
     const occurancy = msg.split(" ").filter(w => ['search','look for','find','task'].includes(w)).length
 
-    if (occurancy > 1) {
+    if (occurancy > 1 && msg.indexOf('name') != -1) {
       client.tasks.list({ status: "running" }).then(tasks => {
         tasks.forEach(function (task) {
           if (msg.toLowerCase().indexOf(task.name) != -1) {
