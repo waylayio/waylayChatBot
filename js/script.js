@@ -142,7 +142,7 @@ async function insertMessage(message) {
           text: config.lastMessage
         }
       }).then(response => {
-        replyMessage("message forwarded to " + channel)
+        replyMessage("message forwarded to " + channel + " channel")
       }).catch(error => {
         replyMessage(JSON.stringify(error));
       })
