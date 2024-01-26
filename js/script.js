@@ -122,7 +122,7 @@ async function insertMessage(message) {
       await client.tasks.list({ status: "running" }).then(tasks => {
         tasks.forEach(function (task) {
           var id = msg.split(" ").find(t => t.length === 36)
-          if (msg.toLowerCase().indexOf(task.name) != -1 || id === task.ID) {
+          if (msg.toLowerCase().indexOf(task.name.toLowerCase()) != -1 || id === task.ID) {
             replyMessage(task.name + " : " + task.ID)
             config.entityId = task.ID
             found = true
