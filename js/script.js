@@ -103,7 +103,7 @@ function setMessageTimestamp() {
   }
 }
 
-function insertMessage(message) {
+async function insertMessage(message) {
   msg = message || $('.message-input').val().trim()
   var type = "Task"
 
@@ -118,7 +118,7 @@ function insertMessage(message) {
 
     var found = false
     if (occurancy > 1) {
-      client.tasks.list({ status: "running" }).then(tasks => {
+      await client.tasks.list({ status: "running" }).then(tasks => {
         tasks.forEach(function (task) {
           var id = msg.split(" ").find(t => t.length === 36)
           if (msg.toLowerCase().indexOf(task.name) != -1 || id === task.ID) {
