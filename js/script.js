@@ -7,6 +7,9 @@ const loadButton = $('#load-btn')
 const $messages = $('.messages-content')
 const connectButton = $('#btnFormConnect')
 const logoutButton = $('#logout')
+var chatMessages = [];
+var currentIndex = -1;
+   
 
 class FIFOBuffer {
   constructor(maxSize) {
@@ -195,22 +198,40 @@ recognition.onspeechend = () => {
 };
 
 function replyMessage(message) {
-  if ($('.message-input').val() == '') {
-    $('<div class="message loading new"><figure class="avatar"><img src="' + avatar + '" /></figure><span></span></div>').appendTo($('.mCSB_container'));
-    updateScrollbar();
-    $('.message.loading').remove();
-    $('<div class="message new"><figure class="avatar"><img src="' + avatar + '"  /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
-    setMessageTimestamp();
-    updateScrollbar();
-  }
+  $('<div class="message loading new"><figure class="avatar"><img src="' + avatar + '" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+  updateScrollbar();
+  $('.message.loading').remove();
+  $('<div class="message new"><figure class="avatar"><img src="' + avatar + '"  /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
+  setMessageTimestamp();
+  updateScrollbar();
 }
 
-$(window).on('keydown', function (e) {
-  if (e.which == 13) {
-    insertMessage();
-    return false;
+$('#user-input').on('keydown', function(e) {
+  if (e.keyCode === 38) { 
+      e.preventDefault();
+      if (currentIndex < chatMessages.length - 1) {
+          currentIndex++;
+          $('#user-input').val(chatMessages[currentIndex]);
+      }
+  } else if (e.keyCode === 40) { 
+      e.preventDefault();
+      if (currentIndex > 0) {
+          currentIndex--;
+          $('#user-input').val(chatMessages[currentIndex]);
+      }
   }
-})
+});
+
+$('#user-input').on('keypress', function(e) {
+  if (e.which === 13) { 
+      var message = $(this).val();
+      if (message.trim() !== '') {
+        insertMessage();
+        chatMessages.unshift(message);
+        currentIndex = -1;
+      }
+  }
+});
 
 $(document).ready(function () {
   init()
