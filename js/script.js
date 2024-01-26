@@ -171,7 +171,7 @@ async function insertMessage(message) {
         myBuffer.lastMessage = myBuffer.getLatestValue() ?  myBuffer.getLatestValue().content : "no answer, please try another question"
         replyMessage(myBuffer.lastMessage)
       }).catch(error => {
-        replyMessage(config.DEBUG ? JSON.stringify(error) : "Error in response, please try again")
+        replyMessage(config.DEBUG ? JSON.stringify(error) : "Error in the response, please try another question")
       })
     }
   }
