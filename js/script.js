@@ -45,7 +45,7 @@ const SpeechRecognitionEvent =
 
 const recognition = new SpeechRecognition();
 const speechRecognitionList = new SpeechGrammarList();
-const myBuffer = new FIFOBuffer(100)
+const myBuffer = new FIFOBuffer(config.bufferSize || 100)
 
 
 var minutues, client, OPENAI_API_KEY, WAYLAY_BOT
