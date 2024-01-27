@@ -7,6 +7,7 @@ const loadButton = $('#load-btn')
 const $messages = $('.messages-content')
 const connectButton = $('#btnFormConnect')
 const logoutButton = $('#logout')
+const userInput = $('#user-input')
 var chatMessages = [];
 var currentIndex = -1;
    
@@ -75,7 +76,7 @@ async function login(ops) {
   slackBot = await client.sensors.get("slackPostMessage")
 
   formConnect.hide()
-  app.show()
+  app.fadeIn(1500)
 
   recognition.grammars = speechRecognitionList;
   recognition.continuous = false;
@@ -206,28 +207,28 @@ function replyMessage(message) {
   updateScrollbar();
 }
 
-$('#user-input').on('keydown', function(e) {
+userInput.on('keydown', function(e) {
   if (e.keyCode === 38) { 
       e.preventDefault();
       if (currentIndex < chatMessages.length - 1) {
           currentIndex++;
-          $('#user-input').val(chatMessages[currentIndex]);
+          userInput.val(chatMessages[currentIndex]);
       }
   } else if (e.keyCode === 40) { 
       e.preventDefault();
       if (currentIndex > 0) {
           currentIndex--;
-          $('#user-input').val(chatMessages[currentIndex]);
+          userInput.val(chatMessages[currentIndex]);
       }
   }
 });
 
-$('#user-input').on('keypress', function(e) {
+userInput.on('keypress', function(e) {
   if (e.which === 13) { 
       var message = $(this).val();
       if (message.trim() !== '') {
         insertMessage();
-        chatMessages.unshift(message);
+        chatMessages.unshift(message.replaceAll('\n',""));
         currentIndex = -1;
       }
   }
