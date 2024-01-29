@@ -10,7 +10,6 @@ const logoutButton = $('#logout')
 const userInput = $('#user-input')
 var chatMessages = [];
 var currentIndex = -1;
-   
 
 class FIFOBuffer {
   constructor(maxSize) {
@@ -73,6 +72,8 @@ async function login(ops) {
   WAYLAY_BOT = await client.vault.get("WAYLAY_BOT").catch(err=>{})
   OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY")
   botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
+  explainSensor = await client.sensors.get(config.EXPLAIN_BOT || "ExplainOpenAI")
+
   slackBot = await client.sensors.get("slackPostMessage")
 
   formConnect.hide()
@@ -84,13 +85,6 @@ async function login(ops) {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
   recognition.custom_grammar = ['task', 'alarm']
-
-  // client.tasks.list({ status: "running" }).then(tasks => {
-  //   tasks.forEach(function (task) {
-  //     config.entityId = task.ID
-  //     replyMessage(task.name + " : " + task.ID);
-  //   });
-  // })
 }
 
 connectButton.click(() => {
@@ -147,6 +141,10 @@ async function insertMessage(message) {
     $('.message-input').val(null);
     updateScrollbar();
     const slackMessage = msg.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
+    const explainTaskMessage = msg.split(" ").filter(w => ['explain', 'task'].includes(w)).length
+    var entityId = msg.split(" ").find(w => w.length == 36)
+    if(entityId)
+      config.entityId = entityId
 
     if (slackMessage > 1) {
       var channel = config.channel || "bot"
@@ -157,6 +155,20 @@ async function insertMessage(message) {
         }
       }).then(response => {
         replyMessage("message forwarded to " + channel + " channel")
+      }).catch(error => {
+        replyMessage(JSON.stringify(error));
+      })
+    } else if(explainSensor && explainTaskMessage > 1 && config.entityId) {
+      client.sensors.execute(explainSensor.name, explainSensor.version, {
+        properties: {
+          query: msg,
+          entityType: "Task",
+          entityId: config.entityId,
+          OPENAI_API_KEY
+        }
+      }).then(response => {
+        myBuffer.lastMessage = response.rawData.response
+        replyMessage(response.rawData.response)
       }).catch(error => {
         replyMessage(JSON.stringify(error));
       })
@@ -173,6 +185,9 @@ async function insertMessage(message) {
           myBuffer.push(response.rawData.messages[response.rawData.messages.length-1])
         }
         myBuffer.lastMessage = myBuffer.getLatestValue() ?  myBuffer.getLatestValue().content : "no answer, please try another question"
+        var entityId = myBuffer.lastMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
+        if(entityId)
+          config.entityId = entityId
         replyMessage(myBuffer.lastMessage)
       }).catch(error => {
         replyMessage(config.DEBUG ? JSON.stringify(error) : "Error in the response, please try another question")
