@@ -1,5 +1,5 @@
-const avatar = "img/tiny.jpg";
-const avatar_majic = "img/magic.jpg";
+const avatar = "img/tiny.png";
+const avatar_majic = "img/magic.png";
 const formConnect = $('#formConnect')
 const loginError = $('.login-error')
 const app = $('#app')
