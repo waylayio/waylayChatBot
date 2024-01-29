@@ -167,10 +167,10 @@ async function insertMessage(message) {
           OPENAI_API_KEY
         }
       }).then(response => {
-        myBuffer.lastMessage = response.rawData.response
-        replyMessage(response.rawData.response)
+        myBuffer.lastMessage = response.rawData.response || response.rawData.error
+        replyMessage(response.rawData.response || response.rawData.error)
       }).catch(error => {
-        replyMessage(JSON.stringify(error));
+        replyMessage(config.DEBUG ? JSON.stringify(error) : "Error in the response, please try another question");
       })
     } else {
       client.sensors.execute(botSensor.name, botSensor.version, {
