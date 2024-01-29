@@ -1,4 +1,5 @@
-const avatar = "https://assets-global.website-files.com/600af1353f91b9eff1de3e74/6422ab2c2bcdd3fb25324cfb_TinyAutomator-p-500.png";
+const avatar = "img/tiny.jpg";
+const avatar_majic = "img/magic.jpg";
 const formConnect = $('#formConnect')
 const loginError = $('.login-error')
 const app = $('#app')
@@ -168,7 +169,7 @@ async function insertMessage(message) {
         }
       }).then(response => {
         myBuffer.lastMessage = response.rawData.response || response.rawData.error
-        replyMessage(response.rawData.response || response.rawData.error)
+        replyMessage(response.rawData.response || response.rawData.error, avatar_majic)
       }).catch(error => {
         replyMessage(config.DEBUG ? JSON.stringify(error) : "Error in the response, please try another question");
       })
@@ -213,11 +214,11 @@ recognition.onspeechend = () => {
   recognition.stop();
 };
 
-function replyMessage(message) {
-  $('<div class="message loading new"><figure class="avatar"><img src="' + avatar + '" /></figure><span></span></div>').appendTo($('.mCSB_container'));
+function replyMessage(message, image = avatar) {
+  $('<div class="message loading new"><figure class="avatar"><img src="' + image + '" /></figure><span></span></div>').appendTo($('.mCSB_container'));
   updateScrollbar();
   $('.message.loading').remove();
-  $('<div class="message new"><figure class="avatar"><img src="' + avatar + '"  /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
+  $('<div class="message new"><figure class="avatar"><img src="' + image + '"  /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
   setMessageTimestamp();
   updateScrollbar();
 }
