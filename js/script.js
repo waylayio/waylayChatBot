@@ -218,6 +218,9 @@ function replyMessage(message, image = avatar) {
   $('<div class="message loading new"><figure class="avatar"><img src="' + image + '" /></figure><span></span></div>').appendTo($('.mCSB_container'));
   updateScrollbar();
   $('.message.loading').remove();
+  if(Array.isArray(message) ){
+    message = message[0]
+  }
   message = message.replace(/\n/g, "<br>")
   $('<div class="message new"><figure class="avatar"><img src="' + image + '"  /></figure>' + message + '</div>').appendTo($('.mCSB_container')).addClass('new');
   setMessageTimestamp();
