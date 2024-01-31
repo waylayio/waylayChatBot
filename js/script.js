@@ -78,7 +78,8 @@ async function login(ops) {
   slackBot = await client.sensors.get("slackPostMessage")
 
   formConnect.hide()
-  app.fadeIn(1500)
+  app.show()
+  $('#introFrame').fadeOut(3000)
 
   recognition.grammars = speechRecognitionList;
   recognition.continuous = false;
