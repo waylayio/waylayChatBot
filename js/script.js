@@ -12,8 +12,26 @@ const SpeechGrammarList =
 const SpeechRecognitionEvent =
   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
-const recognition = new SpeechRecognition();
-const speechRecognitionList = new SpeechGrammarList();
+const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
+var recognition, speechRecognitionList;
+
+if (speachEnabled) {
+  recognition = new SpeechRecognition();
+  peechRecognitionList = new SpeechGrammarList();
+  recognition.grammars = speechRecognitionList;
+  recognition.continuous = false;
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.custom_grammar = ['task', 'alarm'];
+} else {
+  $("#record").css("pointer-events", "none");
+  $("#record").css("color","rgb(217, 217, 227)")
+}
+
+
+
+
 
 
 $.urlParam = function (name) {
@@ -58,12 +76,6 @@ async function login(ops) {
     botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
   
     slackBot = await client.sensors.get("slackPostMessage")
-    recognition.grammars = speechRecognitionList;
-    recognition.continuous = false;
-    recognition.lang = 'en-US'
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.custom_grammar = ['task', 'alarm']
   }
 
 const loadDataFromLocalstorage = () => {
@@ -222,7 +234,8 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 $('#record').click(function () {
-    recognition.start();
+    if(speachEnabled)
+      recognition.start();
   });
   
   recognition.onresult = (event) => {
