@@ -7,12 +7,11 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
   <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.min.css'>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div style="display:none" id="cover"></div>
 <div class="container">
   <div class="row" id="formConnect">
     <div class="col-md-6 offset-md-3">
@@ -33,15 +32,14 @@
             <input type="text" class="form-control" id="domain" aria-describedby="domain"
             placeholder="Domain">
           </div>
-          <div class="text-center"><button type="submit" class="btn-primary btn-block btn-lg" id="btnFormConnect">Login</button></div>
           <div style="display:none" class="login-error"> <span>Incorrect credentials</span></div>
         </div>
       </div>
-
     </div>
+    <!-- something is wrong here, if I place this button in the div above it is not clickable.-->
+    <div ><button type="button" style="margin-top: 3rem!important" class="btn btn-primary btn-lg" id="btnFormConnect">Login</button></div>
   </div>
 </div>
-
 <div id="app" style="display:none" class="chat">
   <div id="introFrame" class="text-center">
     <img  style='height: 100%; width: 100%; object-fit: contain' src="img/intro.jpeg">
@@ -68,7 +66,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
 <script src="https://code.jquery.com/jquery-migrate-1.4.1.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.3/jquery.mCustomScrollbar.concat.min.js'></script>
 <script  src="js/config.js"></script>
 <script  src="js/script.js"></script>

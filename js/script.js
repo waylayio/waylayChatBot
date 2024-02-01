@@ -88,8 +88,7 @@ async function login(ops) {
   recognition.maxAlternatives = 1;
   recognition.custom_grammar = ['task', 'alarm']
 }
-
-connectButton.click(() => {
+connectButton.click((e) =>{
   login({ domain: $('#domain').val(), user: $('#user').val(), password: $('#pwd').val() })
 })
 
@@ -101,12 +100,12 @@ logoutButton.click((e) => {
 })
 
 async function init() {
+  formConnect.hide()
   app.hide()
   loginError.hide()
-  $('[data-toggle="tooltip"]').tooltip()
+  //$('[data-toggle="tooltip"]').tooltip()
   $('#domain').val(config.domain)
   if ($.urlParam('token')) {
-    formConnect.hide()
     login({ token: $.urlParam('token') })
   } else {
     formConnect.show()
@@ -257,6 +256,6 @@ userInput.on('keypress', function(e) {
   }
 });
 
-$(document).ready(function () {
+$(document).ready(async function () {
   init()
 });
