@@ -13,11 +13,11 @@ const SpeechRecognitionEvent =
   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
-var recognition, speechRecognitionList;
+var recognition;
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
-  peechRecognitionList = new SpeechGrammarList();
+  var speechRecognitionList = new SpeechGrammarList();
   recognition.grammars = speechRecognitionList;
   recognition.continuous = false;
   recognition.lang = 'en-US';
