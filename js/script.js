@@ -24,6 +24,16 @@ if (speachEnabled) {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
   recognition.custom_grammar = ['task', 'alarm'];
+  recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    $("#chat-input").text(text);
+    handleOutgoingChat(text);
+  };
+  
+  recognition.onspeechend = () => {
+    recognition.stop();
+  };
+
 } else {
   $("#record").css("pointer-events", "none");
   $("#record").css("color","rgb(217, 217, 227)")
@@ -238,16 +248,6 @@ $('#record').click(function () {
       recognition.start();
   });
   
-  recognition.onresult = (event) => {
-    const text = event.results[0][0].transcript;
-    $("#chat-input").text(text);
-    handleOutgoingChat(text);
-  };
-  
-  recognition.onspeechend = () => {
-    recognition.stop();
-  };
-
 loadDataFromLocalstorage();
 if ($.urlParam('token')) {
    login({ token: $.urlParam('token') })
