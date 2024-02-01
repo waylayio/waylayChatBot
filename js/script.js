@@ -39,11 +39,6 @@ if (speachEnabled) {
   $("#record").css("color","rgb(217, 217, 227)")
 }
 
-
-
-
-
-
 $.urlParam = function (name) {
     var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
     if (results == null) {
@@ -51,6 +46,7 @@ $.urlParam = function (name) {
     }
     return decodeURI(results[1]) || 0;
 }
+
 class FIFOBuffer {
     constructor(maxSize) {
       this.maxSize = maxSize;
@@ -134,6 +130,9 @@ const getChatResponse = async (incomingChatDiv) => {
         chatContainer.scrollTo(0, chatContainer.scrollHeight); 
       })
     } else {
+      if(config.DEBUG){
+        console.log('messages prepared for the request:', myBuffer.getBuffer())
+      }
       client.sensors.execute(botSensor.name, botSensor.version, {
         properties: {
           question: userText,
@@ -150,6 +149,9 @@ const getChatResponse = async (incomingChatDiv) => {
         if(entityId)
           config.entityId = entityId
         pElement.textContent = myBuffer.lastMessage
+        if(config.DEBUG){
+          console.log('message: response', response.rawData.messages)
+        }
       }).catch(error => {
         pElement.classList.add("error");
         pElement.textContent = "Oops! Something went wrong while retrieving the response. Please try again.";
