@@ -62,6 +62,10 @@ class FIFOBuffer {
     getBuffer() {
       return this.buffer;
     }
+
+    clearBuffer() {
+      this.buffer = [];
+    }
   
     getLatestValue() {
       if (this.buffer.length === 0) {
@@ -219,6 +223,7 @@ const handleOutgoingChat = (text) => {
 deleteButton.addEventListener("click", () => {
   localStorage.removeItem("all-chats");
   loadDataFromLocalstorage();
+  myBuffer.clearBuffer();
 });
 
 themeButton.addEventListener("click", () => {
