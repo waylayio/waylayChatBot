@@ -91,7 +91,7 @@ const loadDataFromLocalstorage = () => {
     document.body.classList.toggle("light-mode", themeColor === "light_mode");
     themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
 
-    const defaultText = `<div class="default-text">
+    const defaultText = `<div class="squeeze-and-disappear default-text">
                             <h1>Waylay IBot</h1>
                             <p>Start a conversation and explore the power of AI.<br> Waylay research lab</p>
                         </div>`
