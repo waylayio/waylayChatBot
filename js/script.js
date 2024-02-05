@@ -116,7 +116,18 @@ const getChatResponse = async (incomingChatDiv) => {
     const pElement = document.createElement("p");
 
     const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
-    if (slackMessage > 1) {
+    
+    const configMessage = userText.split(" ").filter(w => ['set', 'model', 'version'].includes(w)).length
+
+    if (configMessage > 1) {
+      if(userText.indexOf('model')> -1 && userText.split(" ").length === 3) {
+        pElement.textContent = "bot configured with a model " + model
+        config.openAIModel = userText.split(" ")[2]
+      } else if(userText.indexOf('version')> -1 && userText.split(" ").length === 3) {
+        pElement.textContent = "bot configured with a version " + version
+        config.botVersion = userText.split(" ")[2]
+      }
+    } else if (slackMessage > 1) {
       var channel = config.channel || "bot"
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
@@ -137,7 +148,7 @@ const getChatResponse = async (incomingChatDiv) => {
       if(config.DEBUG){
         console.log('messages prepared for the request:', myBuffer.getBuffer())
       }
-      client.sensors.execute(botSensor.name, botSensor.version, {
+      client.sensors.execute(botSensor.name, config.botVersion || botSensor.version, {
         properties: {
           question: userText,
           messages: myBuffer.getBuffer(),
