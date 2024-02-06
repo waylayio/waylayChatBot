@@ -248,108 +248,108 @@ showError = function(error) {
   pElement.textContent = error;
   incomingChatDiv.querySelector(".typing-animation").remove();
   incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-
 }
 
-$( document ).ready(function() {
+deleteButton.addEventListener("click", () => {
+  localStorage.removeItem("all-chats");
+  loadDataFromLocalstorage();
+  myBuffer.clearBuffer();
+});
 
-  deleteButton.addEventListener("click", () => {
-    localStorage.removeItem("all-chats");
-    loadDataFromLocalstorage();
-    myBuffer.clearBuffer();
-  });
-  
-  themeButton.addEventListener("click", () => {
-      // Toggle body's class for the theme mode and save the updated theme to the local storage 
-      document.body.classList.toggle("light-mode");
-      localStorage.setItem("themeColor", themeButton.innerText);
-      themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-  });
-  
-  const initialInputHeight = chatInput.scrollHeight;
-  
-  chatInput.addEventListener("input", () => {   
-      // Adjust the height of the input field dynamically based on its content
-      chatInput.style.height =  `${initialInputHeight}px`;
-      chatInput.style.height = `${chatInput.scrollHeight}px`;
-  });
-  
-  chatInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
-          e.preventDefault();
-          if(chatInput.value.trim() != ''){
-            chatMessages.unshift(chatInput.value.trim());
-            currentIndex = -1;
-          }
-          handleOutgoingChat();
-      }
-      if (e.keyCode === 38) { 
+themeButton.addEventListener("click", () => {
+    // Toggle body's class for the theme mode and save the updated theme to the local storage 
+    document.body.classList.toggle("light-mode");
+    localStorage.setItem("themeColor", themeButton.innerText);
+    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+});
+
+const initialInputHeight = chatInput.scrollHeight;
+
+chatInput.addEventListener("input", () => {   
+    // Adjust the height of the input field dynamically based on its content
+    chatInput.style.height =  `${initialInputHeight}px`;
+    chatInput.style.height = `${chatInput.scrollHeight}px`;
+});
+
+chatInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
         e.preventDefault();
-        if (currentIndex < chatMessages.length - 1) {
-          currentIndex++;
-          chatInput.value = chatMessages[currentIndex];
+        if(chatInput.value.trim() != ''){
+          chatMessages.unshift(chatInput.value.trim());
+          currentIndex = -1;
         }
-      } else if (e.keyCode === 40) { 
-          e.preventDefault();
-          if (currentIndex > 0) {
-            currentIndex--;
-            chatInput.value = chatMessages[currentIndex];
-        }
+        handleOutgoingChat();
+    }
+    if (e.keyCode === 38) { 
+      e.preventDefault();
+      if (currentIndex < chatMessages.length - 1) {
+        currentIndex++;
+        chatInput.value = chatMessages[currentIndex];
       }
+    } else if (e.keyCode === 40) { 
+        e.preventDefault();
+        if (currentIndex > 0) {
+          currentIndex--;
+          chatInput.value = chatMessages[currentIndex];
+      }
+    }
+});
+
+$('#record').click(function () {
+    if(speachEnabled)
+      recognition.start();
   });
   
-  $('#record').click(function () {
-      if(speachEnabled)
-        recognition.start();
-    });
-    
-  sendButton.addEventListener("click", handleOutgoingChat);
+sendButton.addEventListener("click", handleOutgoingChat);
 
-  templateButton.addEventListener("click", () => {
-    const defaultText = `
-          <div class="card">
-            <img src="images/alarms.png" alt="Card Image">
-            <div class="card-content">
-              <h4>Alarm queries</h4>
-              <ul>
-                <li>Which is the last created alarm?</li>
-                <li>Which are the last created alarms?</li>
-                <li>Last triggered alarm</li>
-                <li>Share the last updated alarm</li>
-                <li>List alarms assigned to USER</li>
-                <li>List alarms with severity CRITICAL</li>
-                <li>Describe why was the alarm with ALARM ID raised</li>
-                <li>What is the root cause for alarm ALARM ID?</li>
-                <li>Describe what does the task that raised alarm ALARM ID do?</li>
-                <li>Are there alarms on resource X?</li>
-                <li>Give me the last alarm on resource X</li>
-              </ul>
-            </div>
+templateButton.addEventListener("click", () => {
+  const defaultText = `
+        <div class="card">
+          <div class="card-content">
+            <h4><span class="material-symbols-rounded">notifications</span>
+            Alarm queries</h4>
+            <ul>
+              <li>Which is the last created alarm?</li>
+              <li>Last triggered alarm</li>
+              <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
+              <li>List alarms with severity CRITICAL</li>
+              <li>Describe why was the alarm with ALARM ID raised</li>
+              <li>What is the root cause for alarm ALARM ID?</li>
+              <li>Describe what does the task that raised alarm ALARM ID do?</li>
+              <li>Are there alarms on resource X?</li>
+              <li>Give me the last alarm on resource X</li>
+            </ul>
           </div>
-          
-          <div class="card">
-            <img src="images/tasks.png"  alt="Card Image">
-            <div class="card-content">
-            <h4>Task queries</h4>
-              <ul>
-                <li>List RUNNING tasks</li>
-                <li>Count RUNNING tasks</li>
-                <li>What are the most recent tasks? This cannot be properly implemented while there is no sort and order on tasks endpoint</li>
-                <li>Describe what does the task TID do?</li>
-              </ul>
-            </div>
-          </div>`
-    var icon = $('#template-btn');
-    icon.toggleClass('up');
-    if (icon.hasClass('up') ) {
-      cardContainer.replaceChildren();
-      icon.text('note_stack');
-    } else {
-      icon.text('stack');
-      cardContainer.innerHTML = defaultText;   
-    }
- 
-  });
+        </div>
+        
+        <div class="card">
+          <div class="card-content">
+          <h4><span id="delete-btn" class="material-symbols-rounded">flowsheet</span>
+          Task queries</h4>
+            <ul>
+              <li>List RUNNING tasks</li>
+              <li>Count RUNNING tasks</li>
+              <li>What are the most recent tasks? This cannot be properly implemented while there is no sort and order on tasks endpoint</li>
+              <li>Describe what does the task TID do?</li>
+              <li>Summarize the alarm(s) triggered by task TID</li>
+              <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
+            </ul>
+          </div>
+        </div>`
+  var icon = $('#template-btn');
+  icon.toggleClass('up');
+  if (icon.hasClass('up') ) {
+    cardContainer.replaceChildren();
+    icon.text('note_stack');
+  } else {
+    icon.text('stack');
+    cardContainer.innerHTML = defaultText;   
+  }
+
+});
+
+
+$( document ).ready(function() {
 
   $('#introFrame').fadeOut(4000, ()=>{
     loadDataFromLocalstorage();
