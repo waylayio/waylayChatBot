@@ -258,9 +258,10 @@ $('#record').click(function () {
 sendButton.addEventListener("click", handleOutgoingChat);
 
 $( document ).ready(function() {
-  $('#introFrame').fadeOut(4000)
-  loadDataFromLocalstorage();
-  if ($.urlParam('token')) {
-    login({ token: $.urlParam('token') })
-  }
+  $('#introFrame').fadeOut(4000, ()=>{
+    loadDataFromLocalstorage();
+    if ($.urlParam('token')) {
+      login({ token: $.urlParam('token') })
+    }
+  })
 });
