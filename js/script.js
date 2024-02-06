@@ -334,6 +334,8 @@ templateButton.addEventListener("click", () => {
               <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
               <li>What are the tasks executed on resource X?</li>
               <li>List RUNNING tasks on resource X</li>
+              <li>Explain me the logic of this task</li>
+              <li>Tell me the values that this task has collected</li>
             </ul>
           </div>
         </div>`
