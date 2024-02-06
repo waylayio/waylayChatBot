@@ -198,6 +198,8 @@ const showTypingAnimation = () => {
 }
 
 const handleOutgoingChat = (text) => {
+    const initialInputHeight = chatInput.scrollHeight;
+
     userText = chatInput.value.trim() || text
     if(!userText) return; // If chatInput is empty return from here
 
@@ -220,42 +222,6 @@ const handleOutgoingChat = (text) => {
     setTimeout(showTypingAnimation, 500);
 }
 
-deleteButton.addEventListener("click", () => {
-  localStorage.removeItem("all-chats");
-  loadDataFromLocalstorage();
-  myBuffer.clearBuffer();
-});
-
-themeButton.addEventListener("click", () => {
-    // Toggle body's class for the theme mode and save the updated theme to the local storage 
-    document.body.classList.toggle("light-mode");
-    localStorage.setItem("themeColor", themeButton.innerText);
-    themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-});
-
-const initialInputHeight = chatInput.scrollHeight;
-
-chatInput.addEventListener("input", () => {   
-    // Adjust the height of the input field dynamically based on its content
-    chatInput.style.height =  `${initialInputHeight}px`;
-    chatInput.style.height = `${chatInput.scrollHeight}px`;
-});
-
-chatInput.addEventListener("keydown", (e) => {
-    // If the Enter key is pressed without Shift and the window width is larger 
-    // than 800 pixels, handle the outgoing chat
-    if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
-        e.preventDefault();
-        handleOutgoingChat();
-    }
-});
-
-$('#record').click(function () {
-    if(speachEnabled)
-      recognition.start();
-  });
-  
-sendButton.addEventListener("click", handleOutgoingChat);
 
 showError = function(error) {
   const html = `<div class="chat-content">
@@ -281,6 +247,44 @@ showError = function(error) {
 }
 
 $( document ).ready(function() {
+  
+  deleteButton.addEventListener("click", () => {
+    localStorage.removeItem("all-chats");
+    loadDataFromLocalstorage();
+    myBuffer.clearBuffer();
+  });
+  
+  themeButton.addEventListener("click", () => {
+      // Toggle body's class for the theme mode and save the updated theme to the local storage 
+      document.body.classList.toggle("light-mode");
+      localStorage.setItem("themeColor", themeButton.innerText);
+      themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+  });
+  
+  const initialInputHeight = chatInput.scrollHeight;
+  
+  chatInput.addEventListener("input", () => {   
+      // Adjust the height of the input field dynamically based on its content
+      chatInput.style.height =  `${initialInputHeight}px`;
+      chatInput.style.height = `${chatInput.scrollHeight}px`;
+  });
+  
+  chatInput.addEventListener("keydown", (e) => {
+      // If the Enter key is pressed without Shift and the window width is larger 
+      // than 800 pixels, handle the outgoing chat
+      if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
+          e.preventDefault();
+          handleOutgoingChat();
+      }
+  });
+  
+  $('#record').click(function () {
+      if(speachEnabled)
+        recognition.start();
+    });
+    
+  sendButton.addEventListener("click", handleOutgoingChat);
+
   $('#introFrame').fadeOut(4000, ()=>{
     loadDataFromLocalstorage();
     if ($.urlParam('token')) {
