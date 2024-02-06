@@ -257,11 +257,40 @@ $('#record').click(function () {
   
 sendButton.addEventListener("click", handleOutgoingChat);
 
+showError = function(error) {
+  const html = `<div class="chat-content">
+                    <div class="chat-details">
+                        <img src="images/bot.png" alt="chatbot-img">
+                        <div class="typing-animation">
+                            <div class="typing-dot" style="--delay: 0.2s"></div>
+                            <div class="typing-dot" style="--delay: 0.3s"></div>
+                            <div class="typing-dot" style="--delay: 0.4s"></div>
+                        </div>
+                    </div>
+                    <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+                </div>`;
+  const incomingChatDiv = createChatElement(html, "incoming");
+  chatContainer.appendChild(incomingChatDiv);
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  const pElement = document.createElement("p");
+  pElement.classList.add("error");
+  pElement.textContent = error;
+  incomingChatDiv.querySelector(".typing-animation").remove();
+  incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+
+}
+
 $( document ).ready(function() {
   $('#introFrame').fadeOut(4000, ()=>{
     loadDataFromLocalstorage();
     if ($.urlParam('token')) {
-      login({ token: $.urlParam('token') })
+      login({ token: $.urlParam('token') }).then(response => {
+        console.log("application loaded")
+      }).catch(error =>{
+        showError("not correct token")
+      })
+    } else {
+      showError("You need a token to login.")
     }
   })
 });

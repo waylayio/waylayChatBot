@@ -258,8 +258,8 @@ span.material-symbols-rounded {
 }
 
 .squeeze-and-disappear {
-  animation: squeezeAndDisappear 5s forwards;
-  animation-delay: 5s;
+  animation: squeezeAndDisappear 4s forwards;
+  animation-delay: 4s;
 }
 
 @keyframes squeezeAndDisappear {
@@ -268,7 +268,7 @@ span.material-symbols-rounded {
     opacity: 1;
   }
   100% {
-    transform: scaleX(0) scaleY(0);
+    transform: scaleX(0.6) scaleY(0.6);
     opacity: 0;
   }
 }
