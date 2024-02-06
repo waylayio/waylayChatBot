@@ -329,10 +329,11 @@ templateButton.addEventListener("click", () => {
             <ul>
               <li>List RUNNING tasks</li>
               <li>Count RUNNING tasks</li>
-              <li>What are the most recent tasks? This cannot be properly implemented while there is no sort and order on tasks endpoint</li>
               <li>Describe what does the task TID do?</li>
               <li>Summarize the alarm(s) triggered by task TID</li>
               <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
+              <li>What are the tasks executed on resource X?</li>
+              <li>List RUNNING tasks on resource X</li>
             </ul>
           </div>
         </div>`
