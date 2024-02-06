@@ -77,6 +77,8 @@ class FIFOBuffer {
 
 const myBuffer = new FIFOBuffer(config.bufferSize || 100)
 var client, OPENAI_API_KEY, WAYLAY_BOT
+var chatMessages = [];
+var currentIndex = -1;
 
 
 async function login(ops) {
@@ -247,7 +249,7 @@ showError = function(error) {
 }
 
 $( document ).ready(function() {
-  
+
   deleteButton.addEventListener("click", () => {
     localStorage.removeItem("all-chats");
     loadDataFromLocalstorage();
@@ -274,7 +276,24 @@ $( document ).ready(function() {
       // than 800 pixels, handle the outgoing chat
       if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
           e.preventDefault();
+          if(chatInput.value.trim() != ''){
+            chatMessages.unshift(chatInput.value.trim());
+            currentIndex = -1;
+          }
           handleOutgoingChat();
+      }
+      if (e.keyCode === 38) { 
+        e.preventDefault();
+        if (currentIndex < chatMessages.length - 1) {
+          currentIndex++;
+          chatInput.value = chatMessages[currentIndex];
+        }
+      } else if (e.keyCode === 40) { 
+          e.preventDefault();
+          if (currentIndex > 0) {
+            currentIndex--;
+            chatInput.value = chatMessages[currentIndex];
+        }
       }
   });
   
