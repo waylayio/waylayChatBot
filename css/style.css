@@ -272,3 +272,27 @@ span.material-symbols-rounded {
     opacity: 0;
   }
 }
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 20px;
+  width: 300px;
+}
+
+.card img {
+  width: 10%;
+  height: auto;
+}
+
+.card ul li {
+  font-size: 12px;
+}
+
+
+.card-content {
+  padding: 5px;
+  font-family: Arial, sans-serif;
+}

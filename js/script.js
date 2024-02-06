@@ -1,8 +1,11 @@
 const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
+const cardContainer = document.querySelector(".card-container");
 const themeButton = document.querySelector("#theme-btn");
 const deleteButton = document.querySelector("#delete-btn");
+const templateButton = document.querySelector("#template-btn");
+
 
 let userText = null;
 const SpeechRecognition =
@@ -272,8 +275,6 @@ $( document ).ready(function() {
   });
   
   chatInput.addEventListener("keydown", (e) => {
-      // If the Enter key is pressed without Shift and the window width is larger 
-      // than 800 pixels, handle the outgoing chat
       if (e.key === "Enter" && !e.shiftKey && window.innerWidth > 800) {
           e.preventDefault();
           if(chatInput.value.trim() != ''){
@@ -303,6 +304,52 @@ $( document ).ready(function() {
     });
     
   sendButton.addEventListener("click", handleOutgoingChat);
+
+  templateButton.addEventListener("click", () => {
+    const defaultText = `
+          <div class="card">
+            <img src="images/alarms.png" alt="Card Image">
+            <div class="card-content">
+              <h4>Alarm queries</h4>
+              <ul>
+                <li>Which is the last created alarm?</li>
+                <li>Which are the last created alarms?</li>
+                <li>Last triggered alarm</li>
+                <li>Share the last updated alarm</li>
+                <li>List alarms assigned to USER</li>
+                <li>List alarms with severity CRITICAL</li>
+                <li>Describe why was the alarm with ALARM ID raised</li>
+                <li>What is the root cause for alarm ALARM ID?</li>
+                <li>Describe what does the task that raised alarm ALARM ID do?</li>
+                <li>Are there alarms on resource X?</li>
+                <li>Give me the last alarm on resource X</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="card">
+            <img src="images/tasks.png"  alt="Card Image">
+            <div class="card-content">
+            <h4>Task queries</h4>
+              <ul>
+                <li>List RUNNING tasks</li>
+                <li>Count RUNNING tasks</li>
+                <li>What are the most recent tasks? This cannot be properly implemented while there is no sort and order on tasks endpoint</li>
+                <li>Describe what does the task TID do?</li>
+              </ul>
+            </div>
+          </div>`
+    var icon = $('#template-btn');
+    icon.toggleClass('up');
+    if (icon.hasClass('up') ) {
+      cardContainer.replaceChildren();
+      icon.text('note_stack');
+    } else {
+      icon.text('stack');
+      cardContainer.innerHTML = defaultText;   
+    }
+ 
+  });
 
   $('#introFrame').fadeOut(4000, ()=>{
     loadDataFromLocalstorage();
