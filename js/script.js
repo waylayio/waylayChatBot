@@ -117,17 +117,7 @@ const getChatResponse = async (incomingChatDiv) => {
 
     const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
     
-    const configMessage = userText.split(" ").filter(w => ['set', 'model', 'version'].includes(w)).length
-
-    if (configMessage > 1) {
-      if(userText.indexOf('model')> -1 && userText.split(" ").length === 3) {
-        pElement.textContent = "bot configured with a model " + model
-        config.openAIModel = userText.split(" ")[2]
-      } else if(userText.indexOf('version')> -1 && userText.split(" ").length === 3) {
-        pElement.textContent = "bot configured with a version " + version
-        config.botVersion = userText.split(" ")[2]
-      }
-    } else if (slackMessage > 1) {
+   if (slackMessage > 1) {
       var channel = config.channel || "bot"
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
@@ -138,17 +128,16 @@ const getChatResponse = async (incomingChatDiv) => {
         pElement.textContent = "message forwarded to " + channel + " channel"
       }).catch(error => {
       }).finally(()=>{
-        // Remove the typing animation, append the paragraph element and save the chats to local storage
         incomingChatDiv.querySelector(".typing-animation").remove();
         incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-        localStorage.setItem("all-chats", chatContainer.innerHTML);
+        // localStorage.setItem("all-chats", chatContainer.innerHTML);
         chatContainer.scrollTo(0, chatContainer.scrollHeight); 
       })
     } else {
       if(config.DEBUG){
         console.log('messages prepared for the request:', myBuffer.getBuffer())
       }
-      client.sensors.execute(botSensor.name, config.botVersion || botSensor.version, {
+      client.sensors.execute(botSensor.name, botSensor.version, {
         properties: {
           question: userText,
           messages: myBuffer.getBuffer(),
@@ -266,10 +255,12 @@ $('#record').click(function () {
       recognition.start();
   });
   
-loadDataFromLocalstorage();
-if ($.urlParam('token')) {
-   login({ token: $.urlParam('token') })
-}
 sendButton.addEventListener("click", handleOutgoingChat);
 
-$('#introFrame').fadeOut(4000)
+$( document ).ready(function() {
+  $('#introFrame').fadeOut(4000)
+  loadDataFromLocalstorage();
+  if ($.urlParam('token')) {
+    login({ token: $.urlParam('token') })
+  }
+});
