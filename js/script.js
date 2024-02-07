@@ -318,7 +318,13 @@ templateButton.addEventListener("click", () => {
 });
 
 $('.icons').on('click', function() {
-  $(this).closest('.card-content').find('ul').toggle();
+  var id = $(this).closest('.card-content').find('ul')
+  id.toggle();
+  if (id.is(':visible')) {
+    $(this).text('expand_more')
+  } else {
+      $(this).text('expand_less')
+  }
 });
 
 $( document ).ready(function() {
