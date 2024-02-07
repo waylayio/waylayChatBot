@@ -1,10 +1,13 @@
 const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
-const cardContainer = document.querySelector(".card-container");
 const themeButton = document.querySelector("#theme-btn");
 const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
+const cardContainer = $(".card-container");
+var converter = new showdown.Converter();
+
+
 
 
 let userText = null;
@@ -303,50 +306,14 @@ $('#record').click(function () {
 sendButton.addEventListener("click", handleOutgoingChat);
 
 templateButton.addEventListener("click", () => {
-  const defaultText = `
-        <div class="card">
-          <div class="card-content">
-            <h4><span class="material-symbols-rounded">notifications</span>
-            Alarm queries</h4>
-            <ul>
-              <li>Which is the last created alarm?</li>
-              <li>Last triggered alarm</li>
-              <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
-              <li>List alarms with severity CRITICAL</li>
-              <li>Describe why was the alarm with ALARM ID raised</li>
-              <li>What is the root cause for alarm ALARM ID?</li>
-              <li>Describe what does the task that raised alarm ALARM ID do?</li>
-              <li>Are there alarms on resource X?</li>
-              <li>Give me the last alarm on resource X</li>
-            </ul>
-          </div>
-        </div>
-        
-        <div class="card">
-          <div class="card-content">
-          <h4><span id="delete-btn" class="material-symbols-rounded">flowsheet</span>
-          Task queries</h4>
-            <ul>
-              <li>List RUNNING tasks</li>
-              <li>Count RUNNING tasks</li>
-              <li>Describe what does the task TID do?</li>
-              <li>Summarize the alarm(s) triggered by task TID</li>
-              <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
-              <li>What are the tasks executed on resource X?</li>
-              <li>List RUNNING tasks on resource X</li>
-              <li>Explain me the logic of this task</li>
-              <li>Tell me the values that this task has collected</li>
-            </ul>
-          </div>
-        </div>`
   var icon = $('#template-btn');
   icon.toggleClass('up');
   if (icon.hasClass('up') ) {
-    cardContainer.replaceChildren();
+    cardContainer.fadeOut()
     icon.text('note_stack');
   } else {
     icon.text('stack');
-    cardContainer.innerHTML = defaultText;   
+    cardContainer.fadeIn()  
   }
 
 });

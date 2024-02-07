@@ -10,15 +10,54 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="js/showdown.min.js" defer></script>
     <script src="js/config.js" defer></script>
     <script src="js/script.js" defer></script>
+
   </head>
   <body>
     <div id="introFrame">
       <img  style='height: 100%; width: 100%; object-fit: contain' src="images/intro.jpeg">
    </div>
     <!-- Chats container -->
-    <div style="position: absolute; top: 40px; left: 10px; opacity: 0.9;" class="card-container"></div>
+    <div style="display:none; position: absolute; top: 40px; left: 10px; opacity: 0.9;" class="card-container">
+      <div class="card">
+        <div class="card-content">
+          <h4><span class="material-symbols-rounded">notifications</span>
+          Alarm queries</h4>
+          <ul>
+            <li>Which is the last created alarm?</li>
+            <li>Last triggered alarm</li>
+            <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
+            <li>List alarms with severity CRITICAL</li>
+            <li>Describe why was the alarm with ALARM ID raised</li>
+            <li>What is the root cause for alarm ALARM ID?</li>
+            <li>Describe what does the task that raised alarm ALARM ID do?</li>
+            <li>Are there alarms on resource X?</li>
+            <li>Give me the last alarm on resource X</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="card-content">
+        <h4><span class="material-symbols-rounded">flowsheet</span>
+        Task queries</h4>
+          <ul>
+            <li>List RUNNING tasks</li>
+            <li>Count RUNNING tasks</li>
+            <li>Describe what does the task TID do?</li>
+            <li>Summarize the alarm(s) triggered by task TID</li>
+            <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
+            <li>What are the tasks executed on resource X?</li>
+            <li>List RUNNING tasks on resource X</li>
+            <li>Explain me the logic of this task</li>
+            <li>Tell me the values that this task has collected</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    
     <div class="chat-container"></div>
     <!-- Typing container -->
     <div class="typing-container">
