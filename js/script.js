@@ -5,9 +5,6 @@ const themeButton = document.querySelector("#theme-btn");
 const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
-var converter = new showdown.Converter();
-
-
 
 
 let userText = null;
@@ -121,7 +118,9 @@ const createChatElement = (content, className) => {
 }
 
 const getChatResponse = async (incomingChatDiv) => {
-    const pElement = document.createElement("p");
+    const pElement = document.createElement("div");
+    pElement.classList.add("markdown-body");
+    pElement.style['background-color'] = 'rgb(247, 247, 248)'
 
     const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
     
@@ -133,12 +132,11 @@ const getChatResponse = async (incomingChatDiv) => {
           text: myBuffer.lastMessage
         }
       }).then(response => {
-        pElement.textContent = "message forwarded to " + channel + " channel"
+        pElement.innerHTML = "<p>message forwarded to " + channel + " channel</p>"
       }).catch(error => {
       }).finally(()=>{
         incomingChatDiv.querySelector(".typing-animation").remove();
         incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-        // localStorage.setItem("all-chats", chatContainer.innerHTML);
         chatContainer.scrollTo(0, chatContainer.scrollHeight); 
       })
     } else {
@@ -160,13 +158,13 @@ const getChatResponse = async (incomingChatDiv) => {
         var entityId = myBuffer.lastMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
         if(entityId)
           config.entityId = entityId
-        pElement.textContent = myBuffer.lastMessage
+        pElement.innerHTML =  marked.parse(myBuffer.lastMessage)
         if(config.DEBUG){
           console.log('message: response', response.rawData.messages)
         }
       }).catch(error => {
         pElement.classList.add("error");
-        pElement.textContent = "Oops! Something went wrong while retrieving the response. Please try again.";
+        pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
       }).finally(()=>{
         // Remove the typing animation, append the paragraph element and save the chats to local storage
         incomingChatDiv.querySelector(".typing-animation").remove();
@@ -179,7 +177,7 @@ const getChatResponse = async (incomingChatDiv) => {
 
 const copyResponse = (copyBtn) => {
     // Copy the text content of the response to the clipboard
-    const reponseTextElement = copyBtn.parentElement.querySelector("p");
+    const reponseTextElement = copyBtn.parentElement.querySelector("div");
     navigator.clipboard.writeText(reponseTextElement.textContent);
     copyBtn.textContent = "done";
     setTimeout(() => copyBtn.textContent = "content_copy", 1000);
@@ -321,9 +319,9 @@ $('.icons').on('click', function() {
   var id = $(this).closest('.card-content').find('ul')
   id.toggle();
   if (id.is(':visible')) {
-    $(this).text('expand_more')
+    $(this).text('expand_less')
   } else {
-      $(this).text('expand_less')
+      $(this).text('expand_more')
   }
 });
 

@@ -116,6 +116,7 @@ span.material-symbols-rounded {
   color: var(--text-color);
   word-break: break-word;
 }
+
 .chat .chat-details p.error {
   color: #e55865;
 }
