@@ -87,10 +87,10 @@ var currentIndex = -1;
 async function login(ops) {
     client = new waylay({ token: ops.token })
     await client.withSettings()
-    OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY")
+    OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch( err=>{})
     botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
   
-    slackBot = await client.sensors.get("slackPostMessage")
+    slackBot = await client.sensors.get("slackPostMessage").catch( err=>{console.log('no slack bot configured')})
   }
 
 const loadDataFromLocalstorage = () => {
