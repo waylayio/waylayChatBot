@@ -317,6 +317,10 @@ templateButton.addEventListener("click", () => {
   }
 });
 
+$('.icons').on('click', function() {
+  $(this).closest('.card-content').find('ul').toggle();
+});
+
 $( document ).ready(function() {
   if ($.urlParam('token')) {
     login({ token: $.urlParam('token') }).then(response => {
