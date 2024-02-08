@@ -78,7 +78,10 @@ class FIFOBuffer {
     }
 }
 
-const myBuffer = new FIFOBuffer(config.bufferSize || 100)
+const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
+const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
+const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
+
 var client, OPENAI_API_KEY, WAYLAY_BOT
 var chatMessages = [];
 var currentIndex = -1;
@@ -129,7 +132,7 @@ const getChatResponse = async (incomingChatDiv) => {
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
           channel,
-          text: myBuffer.lastMessage
+          text: messagesBotBuffer.lastReplyMessage
         }
       }).then(response => {
         pElement.innerHTML = "<p>message forwarded to " + channel + " channel</p>"
@@ -141,24 +144,25 @@ const getChatResponse = async (incomingChatDiv) => {
       })
     } else {
       if(config.DEBUG){
-        console.log('messages prepared for the request:', myBuffer.getBuffer())
+        console.log('messages prepared for the request:', messagesBotBuffer.getBuffer())
       }
       client.sensors.execute(botSensor.name, botSensor.version, {
         properties: {
           question: userText,
-          messages: myBuffer.getBuffer(),
+          messages: messagesBotBuffer.getBuffer(),
           openAIModel : config.openAIModel || 'gpt-3.5-turbo-1106',
           openAIKey: OPENAI_API_KEY
         }
       }).then(response => {
         if(response.rawData.messages.length > 1) {
-          myBuffer.push(response.rawData.messages[response.rawData.messages.length-1])
+          messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length-1])
         }
-        myBuffer.lastMessage = myBuffer.getLatestValue() ?  myBuffer.getLatestValue().content : "no answer, please try another question"
-        var entityId = myBuffer.lastMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
+        messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ?  messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
+        messagesBotBuffer.lastQuestion = userText;
+        var entityId = messagesBotBuffer.lastReplyMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
         if(entityId)
           config.entityId = entityId
-        pElement.innerHTML =  marked.parse(myBuffer.lastMessage)
+        pElement.innerHTML =  marked.parse(messagesBotBuffer.lastReplyMessage)
         if(config.DEBUG){
           console.log('message: response', response.rawData.messages)
         }
@@ -177,10 +181,30 @@ const getChatResponse = async (incomingChatDiv) => {
 
 const copyResponse = (copyBtn) => {
     // Copy the text content of the response to the clipboard
-    const reponseTextElement = copyBtn.parentElement.querySelector("div");
+    const reponseTextElement = copyBtn.parentNode.parentElement.querySelector("div");
     navigator.clipboard.writeText(reponseTextElement.textContent);
     copyBtn.textContent = "done";
     setTimeout(() => copyBtn.textContent = "content_copy", 1000);
+}
+
+const okResponse = (copyBtn) => {
+  messagesOKBuffer.push({question: messagesBotBuffer.lastQuestion, response: messagesBotBuffer.lastReplyMessage, version: botSensor.version})
+  copyBtn.textContent = "done";
+  setTimeout(() => {
+    copyBtn.textContent = "thumb_up";
+    copyBtn.style.color = 'lightgreen';
+  }, 1000);
+  copyBtn.style.color = 'lightgreen';
+}
+
+const nokResponse = (copyBtn) => {
+  messagesNOKBuffer.push({question: messagesBotBuffer.lastQuestion, response: messagesBotBuffer.lastReplyMessage, version: botSensor.version})
+  copyBtn.textContent = "done";
+  setTimeout(() => {
+    copyBtn.textContent = "thumb_down";
+    copyBtn.style.color = 'lightcoral';
+  }, 1000);
+  
 }
 
 const showTypingAnimation = () => {
@@ -194,7 +218,11 @@ const showTypingAnimation = () => {
                             <div class="typing-dot" style="--delay: 0.4s"></div>
                         </div>
                     </div>
-                    <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+                    <div class="mx-auto">
+                      <span id="copy" onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+                      <span onclick="okResponse(this)" class="material-symbols-rounded">thumb_up</span>
+                      <span onclick="nokResponse(this)" class="material-symbols-rounded">thumb_down</span>
+                    </div>
                 </div>`;
     // Create an incoming chat div with typing animation and append it to chat container
     const incomingChatDiv = createChatElement(html, "incoming");
@@ -239,7 +267,6 @@ showError = function(error) {
                             <div class="typing-dot" style="--delay: 0.4s"></div>
                         </div>
                     </div>
-                    <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
                 </div>`;
   const incomingChatDiv = createChatElement(html, "incoming");
   chatContainer.appendChild(incomingChatDiv);
@@ -254,7 +281,7 @@ showError = function(error) {
 deleteButton.addEventListener("click", () => {
   localStorage.removeItem("all-chats");
   loadDataFromLocalstorage();
-  myBuffer.clearBuffer();
+  messagesBotBuffer.clearBuffer();
 });
 
 themeButton.addEventListener("click", () => {
