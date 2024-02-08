@@ -123,16 +123,21 @@ const createChatElement = (content, className) => {
 const getChatResponse = async (incomingChatDiv) => {
     const pElement = document.createElement("div");
     pElement.classList.add("markdown-body");
-    pElement.style['background-color'] = 'inherit'
+    pElement.style['background-color'] = 'inherit';
 
-    const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
+    const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length;
+    const feedback = userText.indexOf('feedback') > -1;
+
     
    if (slackMessage > 1) {
       var channel = config.channel || "bot"
+      var text = !feedback ? messagesBotBuffer.lastReplyMessage : JSON.stringify({
+        positiveMessages: messagesOKBuffer.getBuffer(),
+        negativeMessages: messagesNOKBuffer.getBuffer()
+      })
       client.sensors.execute(slackBot.name, slackBot.version, {
         properties: {
-          channel,
-          text: messagesBotBuffer.lastReplyMessage
+          channel, text
         }
       }).then(response => {
         pElement.innerHTML = "<p>message forwarded to " + channel + " channel</p>"
