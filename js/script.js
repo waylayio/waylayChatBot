@@ -317,12 +317,12 @@ templateButton.addEventListener("click", () => {
 
 $('.icons').on('click', function() {
   var id = $(this).closest('.card-content').find('ul')
-  id.toggle(350);
   if (id.is(':visible')) {
-    $(this).text('expand_more')
+    $(this).text('expand_less')
   } else {
-      $(this).text('expand_less')
+      $(this).text('expand_more')
   }
+  id.toggle(350);
 });
 
 $( document ).ready(function() {
