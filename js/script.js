@@ -234,7 +234,7 @@ const showTypingAnimation = () => {
                         </div>
                     </div>
                     <div style="width: 10%; max-width: 100px;" >
-                      <span id="copy" onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
+                      <span onclick="copyResponse(this)" class="material-symbols-rounded">content_copy</span>
                       <span onclick="okResponse(this)" class="material-symbols-rounded">thumb_up</span>
                       <span onclick="nokResponse(this)" class="material-symbols-rounded">thumb_down</span>
                     </div>
