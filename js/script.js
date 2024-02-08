@@ -156,6 +156,7 @@ const getChatResponse = async (incomingChatDiv) => {
       }).then(response => {
         if(response.rawData.messages.length > 1) {
           messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length-1])
+          messagesBotBuffer.fullReply = response.rawData.messages
         }
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ?  messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
         messagesBotBuffer.lastQuestion = userText;
@@ -188,17 +189,26 @@ const copyResponse = (copyBtn) => {
 }
 
 const okResponse = (copyBtn) => {
-  messagesOKBuffer.push({question: messagesBotBuffer.lastQuestion, response: messagesBotBuffer.lastReplyMessage, version: botSensor.version})
+  messagesOKBuffer.push({ question: messagesBotBuffer.lastQuestion, 
+    response: messagesBotBuffer.lastReplyMessage, 
+    fullReply: messagesBotBuffer.fullReply,
+    version: botSensor.version, 
+    domain: client.domain
+  })
   copyBtn.textContent = "done";
   setTimeout(() => {
     copyBtn.textContent = "thumb_up";
     copyBtn.style.color = 'lightgreen';
   }, 1000);
-  copyBtn.style.color = 'lightgreen';
 }
 
 const nokResponse = (copyBtn) => {
-  messagesNOKBuffer.push({question: messagesBotBuffer.lastQuestion, response: messagesBotBuffer.lastReplyMessage, version: botSensor.version})
+  messagesNOKBuffer.push({ question: messagesBotBuffer.lastQuestion, 
+    response: messagesBotBuffer.lastReplyMessage, 
+    fullReply: messagesBotBuffer.fullReply,
+    version: botSensor.version, 
+    domain: client.domain
+  })
   copyBtn.textContent = "done";
   setTimeout(() => {
     copyBtn.textContent = "thumb_down";
