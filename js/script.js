@@ -307,17 +307,17 @@ templateButton.addEventListener("click", () => {
   var icon = $('#template-btn');
   icon.toggleClass('up');
   if (icon.hasClass('up') ) {
-    cardContainer.fadeOut()
+    cardContainer.fadeOut(350)
     icon.text('note_stack');
   } else {
     icon.text('stack');
-    cardContainer.fadeIn()  
+    cardContainer.fadeIn(350)  
   }
 });
 
 $('.icons').on('click', function() {
   var id = $(this).closest('.card-content').find('ul')
-  id.toggle();
+  id.toggle(350);
   if (id.is(':visible')) {
     $(this).text('expand_more')
   } else {
