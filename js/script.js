@@ -319,9 +319,9 @@ $('.icons').on('click', function() {
   var id = $(this).closest('.card-content').find('ul')
   id.toggle();
   if (id.is(':visible')) {
-    $(this).text('expand_less')
+    $(this).text('expand_more')
   } else {
-      $(this).text('expand_more')
+      $(this).text('expand_less')
   }
 });
 
