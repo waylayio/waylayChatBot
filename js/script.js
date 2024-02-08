@@ -120,7 +120,7 @@ const createChatElement = (content, className) => {
 const getChatResponse = async (incomingChatDiv) => {
     const pElement = document.createElement("div");
     pElement.classList.add("markdown-body");
-    pElement.style['background-color'] = 'rgb(247, 247, 248)'
+    pElement.style['background-color'] = 'inherit'
 
     const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length
     
