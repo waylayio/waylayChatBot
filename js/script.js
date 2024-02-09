@@ -92,8 +92,9 @@ async function login(ops) {
     await client.withSettings()
     OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch( err=>{})
     botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
-  
     slackBot = await client.sensors.get("slackPostMessage").catch( err=>{console.log('no slack bot configured')})
+    var tooltip = document.getElementById("tooltip");
+    tooltip.textContent = "Bot version: " + botSensor.version;
   }
 
 const loadDataFromLocalstorage = () => {
