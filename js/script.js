@@ -369,16 +369,16 @@ $('.icons').on('click', function() {
 });
 
 $( document ).ready(function() {
-  if ($.urlParam('token')) {
-    login({ token: $.urlParam('token') }).then(response => {
-      console.log("application loaded")
-    }).catch(error =>{
-      showError("not correct token")
-    })
-  } else {
-    showError("You need a token to login.")
-  }
   $('#introFrame').fadeOut(4000, ()=>{
     loadDataFromLocalstorage();
+    if ($.urlParam('token')) {
+      login({ token: $.urlParam('token') }).then(response => {
+        console.log("application loaded")
+      }).catch(error =>{
+        showError("not correct token")
+      })
+    } else {
+      showError("You need a token to login.")
+    }
   })
 });

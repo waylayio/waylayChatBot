@@ -259,8 +259,8 @@ span.material-symbols-rounded {
 }
 
 .squeeze-and-disappear {
-  animation: squeezeAndDisappear 4s forwards;
-  animation-delay: 4s;
+  animation: squeezeAndDisappear 2s forwards;
+  animation-delay: 1s;
 }
 
 @keyframes squeezeAndDisappear {
