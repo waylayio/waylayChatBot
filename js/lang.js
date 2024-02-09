@@ -2,7 +2,7 @@ countries = {
     "Spanish": "eu-ES",
     "Bulgarian": "bg-BG",
     "Catalonian": "ca-ES",
-    "Chinesse": "cmn-Hans-CN",
+    "Chinese": "cmn-Hans-CN",
     "Croatian": "hr_HR",
     "Czechian": "cs-CZ",
     "Danish": "da-DK",

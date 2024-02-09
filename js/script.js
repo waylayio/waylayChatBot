@@ -6,7 +6,6 @@ const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
-
 let userText = null;
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
