@@ -6,6 +6,10 @@ const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
+const PROD_GATEWAY = "https://api.waylay.io"; 
+const DEV_GATEWAY = "https://api-aws-dev.waylay.io"; 
+
+
 let userText = null;
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -81,27 +85,50 @@ const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 
-var client, OPENAI_API_KEY, WAYLAY_BOT
+var client, OPENAI_API_KEY, WAYLAY_BOT, gateway
 var chatMessages = [];
 var currentIndex = -1;
 
 
 async function login(ops) {
   client = new waylay({ token: ops.token })
-  //await client.withSettings()
+  // await client.withSettings()
+  gateway = PROD_GATEWAY;
   let loaded = true
-  OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => { 
+  OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => {
     //TODO, find better global bootstrap.
-    client.gateway = "https://api-aws-dev.waylay.io"
+    gateway = DEV_GATEWAY
+    client.gateway = gateway
     loaded = false
   })
-  if(!loaded) {
+  if (!loaded) {
     OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => { })
-  } 
-  botSensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI")
+  }
+  botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
   var tooltip = document.getElementById("tooltip");
-  tooltip.textContent = "Bot version: " + botSensor.version;
+  tooltip.textContent = "Bot version: " + botApp.version;
+}
+
+async function loadBot() {
+  try {
+    const template = await client.templates.get(config.template || "WoxChat");
+    console.log("template loaded", template);
+    return {
+      type: "template",
+      template: template,
+      version: "1.0.0"
+    }
+  } catch (error) {
+    console.log("error loading template", error);
+    // trying to load old wox plugin
+    const sensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI");
+    return {
+      type: "sensor",
+      sensor: sensor,
+      version: sensor.version
+    }
+  }
 }
 
 const loadDataFromLocalstorage = () => {
@@ -151,7 +178,6 @@ const getChatResponse = async (incomingChatDiv) => {
       pElement.innerHTML = "<p>message forwarded to " + channel + " channel</p>"
     }).catch(error => {
     }).finally(() => {
-      incomingChatDiv.querySelector(".typing-animation").remove();
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
     })
@@ -169,14 +195,14 @@ const getChatResponse = async (incomingChatDiv) => {
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
     }
-    client.sensors.execute(botSensor.name, botSensor.version, {
-      properties: {
+    runBot(
+      {
         question: userText,
         messages: messagesBotBuffer.getBuffer(),
         openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
         openAIKey: OPENAI_API_KEY
       }
-    }).then(response => {
+    ).then(response => {
       if (response.rawData.messages.length > 1) {
         messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
         messagesBotBuffer.fullReply = response.rawData.messages
@@ -197,9 +223,32 @@ const getChatResponse = async (incomingChatDiv) => {
       // Remove the typing animation, append the paragraph element and save the chats to local storage
       incomingChatDiv.querySelector(".typing-animation")?.remove();
       incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
-      localStorage.setItem("all-chats", chatContainer.innerHTML);
+          localStorage.setItem("all-chats", chatContainer.innerHTML);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
     })
+  }
+}
+
+async function runBot(args) {
+  console.log('runBot', botApp, args);
+  switch (botApp.type) {
+    case "sensor": {
+      return await client.sensors.execute(botApp.sensor.name, botApp.sensor.version, { properties: args })
+    }
+    case "template": {
+      const url = `${gateway}/rules/v1/templates/${botApp.template.name}/run`;
+      const trun = await axios.post(url, {
+        variables: 
+          args
+      }, {
+        headers: {
+          'Authorization': `Bearer ${client.token}`
+        }
+      });
+      console.log("Task run:", trun);
+      return { rawData: trun.data.taskOutput };
+    }
+    default: throw new Error("wox bot application not found")
   }
 }
 
@@ -216,7 +265,7 @@ const okResponse = (copyBtn) => {
     question: messagesBotBuffer.lastQuestion,
     response: messagesBotBuffer.lastReplyMessage,
     fullReply: messagesBotBuffer.fullReply,
-    version: botSensor.version,
+    version: botApp.version,
     domain: client.domain
   })
   copyBtn.textContent = "done";
@@ -231,7 +280,7 @@ const nokResponse = (copyBtn) => {
     question: messagesBotBuffer.lastQuestion,
     response: messagesBotBuffer.lastReplyMessage,
     fullReply: messagesBotBuffer.fullReply,
-    version: botSensor.version,
+    version: botApp.version,
     domain: client.domain
   })
   copyBtn.textContent = "done";
