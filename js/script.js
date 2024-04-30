@@ -94,11 +94,12 @@ async function login(ops) {
   client = new waylay({ token: ops.token })
   // await client.withSettings()
   gateway = PROD_GATEWAY;
+  client.gateway = PROD_GATEWAY
   let loaded = true
   OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => {
     //TODO, find better global bootstrap.
     gateway = DEV_GATEWAY
-    client.gateway = gateway
+    client.gateway = DEV_GATEWAY
     loaded = false
   })
   if (!loaded) {
