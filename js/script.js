@@ -91,7 +91,6 @@ var currentIndex = -1;
 var eventSource;
 
 function connectAlarms() {
-  const delay = 1000;
   if(eventSource !== undefined){
     eventSource.close()
     console.log('disconnect from the alarm service')
@@ -102,9 +101,7 @@ function connectAlarms() {
     eventSource.onmessage = function(event) {
       const cloudEvent = JSON.parse(event.data)
       console.log('Received CloudEvent:', cloudEvent)
-      setTimeout(() => {
-        handleOutgoingChat('explain the alarm ' + cloudEvent.alarm.id + ' in detail and the logic of the task that is assosiated with this alarm and the root cause and all values and variables');
-      }, 1000)
+      handleOutgoingChat('explain the alarm ' + cloudEvent.alarm.id + ' in detail and the logic of the task that is assosiated with this alarm and the root cause and all values and variables', 0)
     };
     eventSource.onerror = function(error) {
       console.error('EventSource encountered an error:', error)
@@ -338,7 +335,7 @@ const showTypingAnimation = () => {
   getChatResponse(incomingChatDiv);
 }
 
-const handleOutgoingChat = (text) => {
+const handleOutgoingChat = (text, delay = 500) => {
   const initialInputHeight = chatInput.scrollHeight;
 
   userText = chatInput.value.trim() || text
@@ -360,7 +357,7 @@ const handleOutgoingChat = (text) => {
   chatContainer.querySelector(".default-text")?.remove();
   chatContainer.appendChild(outgoingChatDiv);
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  setTimeout(showTypingAnimation, 500);
+  setTimeout(showTypingAnimation, delay);
 }
 
 
