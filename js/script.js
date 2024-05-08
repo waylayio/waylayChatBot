@@ -2,13 +2,13 @@ const chatInput = document.querySelector("#chat-input");
 const sendButton = document.querySelector("#send-btn");
 const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
+const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
 const PROD_GATEWAY = "https://api.waylay.io"; 
 const DEV_GATEWAY = "https://api-aws-dev.waylay.io"; 
-
 
 let userText = null;
 const SpeechRecognition =
@@ -88,7 +88,29 @@ const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 var client, OPENAI_API_KEY, WAYLAY_BOT, gateway
 var chatMessages = [];
 var currentIndex = -1;
+var eventSource;
 
+function connectAlarms() {
+  const delay = 1000;
+  if(eventSource !== undefined){
+    eventSource.close()
+    console.log('disconnect from the alarm service')
+    eventSource = undefined
+  } else {
+    eventSource = new EventSource(client.gateway + '/alarms/v1/events?token=' + client.token)
+    console.log('connect to the alarm service')
+    eventSource.onmessage = function(event) {
+      const cloudEvent = JSON.parse(event.data)
+      console.log('Received CloudEvent:', cloudEvent)
+      setTimeout(() => {
+        handleOutgoingChat('explain the alarm ' + cloudEvent.alarm.id + ' in detail and the logic of the task that is assosiated with this alarm and the root cause and all values and variables');
+      }, 1000)
+    };
+    eventSource.onerror = function(error) {
+      console.error('EventSource encountered an error:', error)
+    }
+  }
+}
 
 async function login(ops) {
   client = new waylay({ token: ops.token })
@@ -374,6 +396,12 @@ themeButton.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
   localStorage.setItem("themeColor", themeButton.innerText);
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
+});
+
+notificationButtom.addEventListener("click", () => {
+  connectAlarms()
+  document.body.classList.toggle("notifications_active");
+  notificationButtom.innerText = document.body.classList.contains("notifications_active") ? "notifications_off" : "notifications_active";
 });
 
 const initialInputHeight = chatInput.scrollHeight;
