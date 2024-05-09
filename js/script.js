@@ -237,6 +237,7 @@ const getChatResponse = async (incomingChatDiv) => {
         console.log('message: response', response.rawData.messages)
       }
     }).catch(error => {
+      console.log('error', error);
       pElement.classList.add("error");
       pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
     }).finally(() => {
