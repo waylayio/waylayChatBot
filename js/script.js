@@ -5,6 +5,7 @@ const themeButton = document.querySelector("#theme-btn");
 const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
+const text2ruleButton = document.querySelector("#text2rule-btn");
 const cardContainer = $(".card-container");
 
 const PROD_GATEWAY = "https://api.waylay.io"; 
@@ -20,6 +21,8 @@ const SpeechRecognitionEvent =
 
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
 var recognition;
+var text2rule = false
+var ruleSet = findClosestRule('')
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -114,11 +117,13 @@ async function login(ops) {
   // await client.withSettings()
   gateway = PROD_GATEWAY;
   client.gateway = PROD_GATEWAY
+  client.console = 'https://console.waylay.io'
   let loaded = true
   OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => {
     //TODO, find better global bootstrap.
     gateway = DEV_GATEWAY
     client.gateway = DEV_GATEWAY
+    client.console = 'https://console-aws.dev.waylay.io'
     loaded = false
   })
   if (!loaded) {
@@ -183,6 +188,7 @@ const getChatResponse = async (incomingChatDiv) => {
   const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length;
   const feedback = userText.indexOf('feedback') > -1;
   const langMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'language'].includes(w)).length == 2;
+  const NLPRuleMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'rule'].includes(w)).length == 2;
 
   if (slackMessage > 1) {
     var channel = config.channel || "bot"
@@ -214,38 +220,75 @@ const getChatResponse = async (incomingChatDiv) => {
       incomingChatDiv.querySelector(".typing-animation").remove();
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    }
-    runBot(
-      {
-        question: userText,
-        messages: messagesBotBuffer.getBuffer(),
-        openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
-        openAIKey: OPENAI_API_KEY
-      }
-    ).then(response => {
-      if (response.rawData.messages.length > 1) {
-        messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
-        messagesBotBuffer.fullReply = response.rawData.messages
-      }
-      messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
-      messagesBotBuffer.lastQuestion = userText;
-      var entityId = messagesBotBuffer.lastReplyMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
-      if (entityId)
-        config.entityId = entityId
-      pElement.innerHTML = marked.parse(messagesBotBuffer.lastReplyMessage)
-      if (config.DEBUG) {
-        console.log('message: response', response.rawData.messages)
-      }
-    }).catch(error => {
-      pElement.classList.add("error");
-      pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
-    }).finally(() => {
-      // Remove the typing animation, append the paragraph element and save the chats to local storage
-      incomingChatDiv.querySelector(".typing-animation")?.remove();
-      incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
-          localStorage.setItem("all-chats", chatContainer.innerHTML);
+    } else if(NLPRuleMessage){
+      ruleSet = findClosestRule(userText)
+      pElement.innerHTML = "<p>set rule to: " + ruleSet + "</p>"
+      incomingChatDiv.querySelector(".typing-animation").remove();
+      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    })
+    } else if(text2rule) {
+      callNLP(userText, ruleSet)
+      .then(data => {
+        console.log(JSON.stringify(data))
+        return client.tasks.create({...data.rule_template,
+          task: {
+            name: 'NLP test', 
+            type: 'onetime'
+            }
+        })
+      })
+      .then(data => {
+        console.log(JSON.stringify(data))
+        pElement.innerHTML = marked.parse('task created ' + data.ID)
+        incomingChatDiv.querySelector(".typing-animation")?.remove();
+        incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+        messagesBotBuffer.push({role: 'user', content: 'task created ' + data.ID})
+        var url = client.console + '/tasks/'+ data.ID + '/debug?token=' + client.token;
+        window.open(url, '_blank');
+      })
+      .catch(error => {
+        pElement.classList.add("error");
+        pElement.innerHTML = "<p>Oops! " + error + "</p>";
+      })
+      .finally(() => {
+        incomingChatDiv.querySelector(".typing-animation")?.remove();
+        incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      })
+    } else {
+      runBot(
+        {
+          question: userText,
+          messages: messagesBotBuffer.getBuffer(),
+          openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
+          openAIKey: OPENAI_API_KEY
+        }
+      ).then(response => {
+        if (response.rawData.messages.length > 1) {
+          messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
+          messagesBotBuffer.fullReply = response.rawData.messages
+        }
+        messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
+        messagesBotBuffer.lastQuestion = userText;
+        var entityId = messagesBotBuffer.lastReplyMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
+        if (entityId)
+          config.entityId = entityId
+        pElement.innerHTML = marked.parse(messagesBotBuffer.lastReplyMessage)
+        if (config.DEBUG) {
+          console.log('message: response', response.rawData.messages)
+        }
+      }).catch(error => {
+        pElement.classList.add("error");
+        pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
+      }).finally(() => {
+        // Remove the typing animation, append the paragraph element and save the chats to local storage
+        incomingChatDiv.querySelector(".typing-animation")?.remove();
+        incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
+            localStorage.setItem("all-chats", chatContainer.innerHTML);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      })
+    }
   }
 }
 
@@ -399,6 +442,12 @@ notificationButtom.addEventListener("click", () => {
   connectAlarms()
   document.body.classList.toggle("notifications_active");
   notificationButtom.innerText = document.body.classList.contains("notifications_active") ? "notifications_off" : "notifications_active";
+});
+
+text2ruleButton.addEventListener("click", () => {
+  text2rule = !text2rule
+  document.body.classList.toggle("speaker_notes");
+  text2ruleButton.innerText = document.body.classList.contains("speaker_notes") ? "speaker_notes_off" : "speaker_notes";
 });
 
 const initialInputHeight = chatInput.scrollHeight;
