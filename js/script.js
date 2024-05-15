@@ -22,7 +22,7 @@ const SpeechRecognitionEvent =
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
 var recognition;
 var text2rule = false
-var ruleSet = findClosestRule('')
+var ruleSet
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -221,13 +221,25 @@ const getChatResponse = async (incomingChatDiv) => {
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
     } else if(NLPRuleMessage){
-      ruleSet = findClosestRule(userText)
-      pElement.innerHTML = "<p>set rule to: " + ruleSet + "</p>"
-      incomingChatDiv.querySelector(".typing-animation").remove();
-      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      findClosestRule(client, userText)
+      .then(data => {
+        ruleSet = data
+        pElement.innerHTML = "<p>set rule to: " + ruleSet + "</p>"
+        incomingChatDiv.querySelector(".typing-animation").remove();
+        incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      })
+      .catch(error => {
+        pElement.classList.add("error");
+        pElement.innerHTML = "<p>Oops! " + error + "</p>";
+      })
+      .finally(() => {
+        incomingChatDiv.querySelector(".typing-animation")?.remove();
+        incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
+        chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      })
     } else if(text2rule) {
-      callNLP(userText, ruleSet)
+      callNLP(client, userText, ruleSet)
       .then(data => {
         console.log(JSON.stringify(data))
         return client.tasks.create({...data.rule_template,
@@ -285,7 +297,7 @@ const getChatResponse = async (incomingChatDiv) => {
         // Remove the typing animation, append the paragraph element and save the chats to local storage
         incomingChatDiv.querySelector(".typing-animation")?.remove();
         incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
-            localStorage.setItem("all-chats", chatContainer.innerHTML);
+        localStorage.setItem("all-chats", chatContainer.innerHTML);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
       })
     }
