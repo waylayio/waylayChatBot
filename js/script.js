@@ -250,12 +250,12 @@ const getChatResponse = async (incomingChatDiv) => {
         })
       })
       .then(data => {
-        console.log(JSON.stringify(data))
-        pElement.innerHTML = marked.parse('task created ' + data.ID)
+        console.log(JSON.stringify(data));
+        pElement.innerHTML = marked.parse('task created ' + data.ID);
         incomingChatDiv.querySelector(".typing-animation")?.remove();
         incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
         chatContainer.scrollTo(0, chatContainer.scrollHeight);
-        messagesBotBuffer.push({role: 'user', content: 'task created ' + data.ID})
+        messagesBotBuffer.push({role: 'user', content: 'task created ' + data.ID});
         var url = client.console + '/tasks/'+ data.ID + '/debug?token=' + client.token;
         window.open(url, '_blank');
       })
@@ -283,10 +283,7 @@ const getChatResponse = async (incomingChatDiv) => {
         }
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
         messagesBotBuffer.lastQuestion = userText;
-        var entityId = messagesBotBuffer.lastReplyMessage.replace(/\n/g, "").split(" ").find(w => w.length == 36)
-        if (entityId)
-          config.entityId = entityId
-        pElement.innerHTML = marked.parse(messagesBotBuffer.lastReplyMessage)
+        pElement.innerHTML = parseForLinks(marked.parse(messagesBotBuffer.lastReplyMessage), client)
         if (config.DEBUG) {
           console.log('message: response', response.rawData.messages)
         }
