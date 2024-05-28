@@ -23,6 +23,14 @@ const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
 var recognition;
 var text2rule = false
 var ruleSet
+const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
+const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
+const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
+
+var client, OPENAI_API_KEY, WAYLAY_BOT, gateway, linkParser
+var chatMessages = [];
+var currentIndex = -1;
+var eventSource;
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -56,42 +64,6 @@ $.urlParam = function (name) {
   return decodeURI(results[1]) || 0;
 }
 
-class FIFOBuffer {
-  constructor(maxSize) {
-    this.maxSize = maxSize;
-    this.buffer = [];
-  }
-
-  push(item) {
-    this.buffer.push(item);
-    if (this.buffer.length > this.maxSize) {
-      this.buffer.shift();
-    }
-  }
-  getBuffer() {
-    return this.buffer;
-  }
-
-  clearBuffer() {
-    this.buffer = [];
-  }
-
-  getLatestValue() {
-    if (this.buffer.length === 0) {
-      return null;
-    }
-    return this.buffer[this.buffer.length - 1];
-  }
-}
-
-const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
-const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
-const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
-
-var client, OPENAI_API_KEY, WAYLAY_BOT, gateway
-var chatMessages = [];
-var currentIndex = -1;
-var eventSource;
 
 function connectAlarms() {
   if(eventSource !== undefined){
@@ -131,6 +103,7 @@ async function login(ops) {
   }
   botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
+  linkParser = new LinkParser(client)
   var tooltip = document.getElementById("tooltip");
   tooltip.textContent = "Bot version: " + botApp.version;
 }
@@ -283,7 +256,7 @@ const getChatResponse = async (incomingChatDiv) => {
         }
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
         messagesBotBuffer.lastQuestion = userText;
-        pElement.innerHTML = parseForLinks(marked.parse(messagesBotBuffer.lastReplyMessage), client)
+        pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
         if (config.DEBUG) {
           console.log('message: response', response.rawData.messages)
         }
