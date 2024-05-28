@@ -8,6 +8,7 @@
   <link rel="icon" type="image/x-icon" href="images/bot.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css" />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/dist/tippy.css">
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/markdown.css" />
 </head>
@@ -95,9 +96,8 @@
         <span id="text2rule-btn" class="material-symbols-rounded">speaker_notes</span>
         <span id="template-btn" class="material-symbols-rounded up">note_stack</span>
       </div>
-      <div style="display: inline-block; position: absolute; right: 1%;" class="tooltip">
+      <div style="display: inline-block; position: absolute; right: 1%;">
         <span id="help" class="material-symbols-rounded">help</span>
-        <div id="tooltip" class="tooltiptext"></div>
       </div>
       <div style="display: inline-block; position: absolute; left: 15px;">
         <span style="width: 20px; opacity: 0.75" id="flag" class="fi fi-us"></span>
@@ -109,6 +109,8 @@
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"
     integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://unpkg.com/@popperjs/core@2"></script>
+  <script src="https://unpkg.com/tippy.js@6"></script>
   <script src="js/config.js"></script>
   <script src="js/lang.js"></script>
   <script src="js/nlp.js"></script>

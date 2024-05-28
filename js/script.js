@@ -104,8 +104,9 @@ async function login(ops) {
   botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
   linkParser = new LinkParser(client)
-  var tooltip = document.getElementById("tooltip");
-  tooltip.textContent = "Bot version: " + botApp.version;
+  tippy('#help', {
+    content: "Bot version: " + botApp.version
+  });
 }
 
 async function loadBot() {
@@ -498,6 +499,24 @@ $('#introFrame').fadeOut(4000, () => {
   if ($.urlParam('token')) {
     login({ token: $.urlParam('token') }).then(response => {
       console.log("application loaded")
+      tippy('#theme-btn', {
+        content: 'Toggle theme'
+      })
+      tippy('#delete-btn', {
+        content: 'Delete all context'
+      })
+      tippy('#record', {
+        content: 'Talk to bot'
+      })
+      tippy('#template-btn', {
+        content: 'Examples'
+      })
+      tippy('#notifications-btn', {
+        content: 'Stream alarms'
+      })
+      tippy('#text2rule-btn', {
+        content: 'Text to rule'
+      })
     }).catch(error => {
       showError("not correct token")
     })
