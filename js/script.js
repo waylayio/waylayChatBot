@@ -225,6 +225,9 @@ const getChatResponse = async (incomingChatDiv) => {
           messagesBotBuffer.fullReply = response.rawData.messages
         }
         messagesBotBuffer.lastReplyMessage = extractMessageText(messagesBotBuffer.getLatestValue())
+        if (config.DEBUG) {
+          console.log('message: last reply', messagesBotBuffer.lastReplyMessage)
+        }
         messagesBotBuffer.lastQuestion = userText;
         pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
       })
