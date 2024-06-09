@@ -153,6 +153,21 @@ const createChatElement = (content, className) => {
   return chatDiv;
 }
 
+const extractMessageText = (message) => {
+  if (message.content) {
+    if (typeof message.content === 'string') {
+      // openai style
+      return message.content
+    }
+    else if (Array.isArray(message.content) && message.content.length > 0) {
+      // AWS bedrock style
+      return message.content[message.content.length-1].text
+    }
+  }
+
+  return "no answer, please try another question"
+}
+
 const getChatResponse = async (incomingChatDiv) => {
   const pElement = document.createElement("div");
   pElement.classList.add("markdown-body");
@@ -209,7 +224,7 @@ const getChatResponse = async (incomingChatDiv) => {
           messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
           messagesBotBuffer.fullReply = response.rawData.messages
         }
-        messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
+        messagesBotBuffer.lastReplyMessage = extractMessageText(messagesBotBuffer.getLatestValue())
         messagesBotBuffer.lastQuestion = userText;
         pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
       })
