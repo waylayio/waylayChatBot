@@ -200,7 +200,11 @@ const getChatResponse = async (incomingChatDiv) => {
           openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
           openAIKey: OPENAI_API_KEY
         }
-      ).then(response => {
+      )
+      .then(response => {
+        if (config.DEBUG) {
+          console.log('message: response', response.rawData.messages)
+        }
         if (response.rawData.messages.length > 1) {
           messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
           messagesBotBuffer.fullReply = response.rawData.messages
@@ -208,13 +212,12 @@ const getChatResponse = async (incomingChatDiv) => {
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
         messagesBotBuffer.lastQuestion = userText;
         pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
-        if (config.DEBUG) {
-          console.log('message: response', response.rawData.messages)
-        }
-      }).catch(error => {
+      })
+      .catch(error => {
         pElement.classList.add("error");
         pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
-      }).finally(() => {
+      })
+      .finally(() => {
         // Remove the typing animation, append the paragraph element and save the chats to local storage
         incomingChatDiv.querySelector(".typing-animation")?.remove();
         incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
