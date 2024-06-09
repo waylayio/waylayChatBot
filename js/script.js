@@ -386,6 +386,7 @@ deleteButton.addEventListener("click", () => {
   localStorage.removeItem("all-chats");
   loadDataFromLocalstorage();
   messagesBotBuffer.clearBuffer();
+  messagesBotBuffer.fullReply = [];
 });
 
 themeButton.addEventListener("click", () => {
