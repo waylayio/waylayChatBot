@@ -232,6 +232,9 @@ const getChatResponse = async (incomingChatDiv) => {
         pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
       })
       .catch(error => {
+        if (config.DEBUG) {
+          console.log('message: error', error)
+        }
         pElement.classList.add("error");
         pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
       })
