@@ -196,13 +196,13 @@ const getChatResponse = async (incomingChatDiv) => {
       runBot(
         {
           question: userText,
-          messages: messagesBotBuffer.getBuffer(),
+          messages: messagesBotBuffer.fullReply || [],
           openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
           openAIKey: OPENAI_API_KEY
         }
       ).then(response => {
-        if (response.rawData.messages.length > 0) {
-          messagesBotBuffer.replaceAll(response.rawData.messages)
+        if (response.rawData.messages.length > 1) {
+          messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
           messagesBotBuffer.fullReply = response.rawData.messages
         }
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
