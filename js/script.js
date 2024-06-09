@@ -201,8 +201,8 @@ const getChatResponse = async (incomingChatDiv) => {
           openAIKey: OPENAI_API_KEY
         }
       ).then(response => {
-        if (response.rawData.messages.length > 1) {
-          messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
+        if (response.rawData.messages.length > 0) {
+          messagesBotBuffer.replaceAll(response.rawData.messages)
           messagesBotBuffer.fullReply = response.rawData.messages
         }
         messagesBotBuffer.lastReplyMessage = messagesBotBuffer.getLatestValue() ? messagesBotBuffer.getLatestValue().content : "no answer, please try another question"
