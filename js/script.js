@@ -110,7 +110,8 @@ async function login(ops) {
 
 async function loadBot() {
   try {
-    const template = await client.templates.get(config.template || "WoxChat");
+    const settings = await client.settings();
+    const template = await client.templates.get(settings.WoxTemplate || config.template || "WoxChat");
     console.log("template loaded", template);
     return {
       type: "template",
