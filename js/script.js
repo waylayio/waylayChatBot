@@ -167,6 +167,8 @@ const getChatResponse = async (incomingChatDiv) => {
   const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length;
   const feedback = userText.indexOf('feedback') > -1;
   const langMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'language'].includes(w)).length == 2;
+  const templateMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'template'].includes(w)).length == 2;
+
 
   if (slackMessage > 1) {
     var channel = config.channel || "bot"
@@ -198,7 +200,19 @@ const getChatResponse = async (incomingChatDiv) => {
       incomingChatDiv.querySelector(".typing-animation").remove();
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
       chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    } else {
+    } 
+    if (templateMessage) {
+      var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.template.name
+      botApp.template.name = _template
+      pElement.innerHTML = "<p>set bot template to: " + _template+ "</p>"
+      incomingChatDiv.querySelector(".typing-animation").remove();
+      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+      chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      tippy('#help', {
+        content: "Bot version: " + botApp.version + ', name: ' + botApp.template.name
+      });
+    }
+    else {
       runBot(
         {
           question: userText,
