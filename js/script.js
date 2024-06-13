@@ -10,6 +10,9 @@ const cardContainer = $(".card-container");
 const PROD_GATEWAY = "https://api.waylay.io"; 
 const PROD_CONSOLE = "https://console.waylay.io";
 
+const DEV_GATEWAY = "https://api-aws-dev.waylay.io";
+const DEV_CONSOLE = "https://console-aws.dev.waylay.io";
+
 let userText = null;
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -88,7 +91,13 @@ async function login(ops) {
   // await client.withSettings()
   gateway = PROD_GATEWAY;
   client.gateway = PROD_GATEWAY
-  client.console = 'https://console.waylay.io'
+  client.console = PROD_CONSOLE
+  await client.tasks.list().catch(err =>
+    {
+      gateway = DEV_GATEWAY;
+      client.gateway = DEV_GATEWAY
+      client.console = DEV_CONSOLE 
+    })
   botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
   linkParser = new LinkParser(client)
