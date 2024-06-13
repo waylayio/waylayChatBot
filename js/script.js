@@ -8,7 +8,7 @@ const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
 const PROD_GATEWAY = "https://api.waylay.io"; 
-const DEV_GATEWAY = "https://api-aws-dev.waylay.io"; 
+const PROD_CONSOLE = "https://console.waylay.io";
 
 let userText = null;
 const SpeechRecognition =
@@ -26,7 +26,7 @@ const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 
-var client, OPENAI_API_KEY, WAYLAY_BOT, gateway, linkParser
+var client, WAYLAY_BOT, gateway, linkParser
 var chatMessages = [];
 var currentIndex = -1;
 var eventSource;
@@ -89,22 +89,11 @@ async function login(ops) {
   gateway = PROD_GATEWAY;
   client.gateway = PROD_GATEWAY
   client.console = 'https://console.waylay.io'
-  let loaded = true
-  OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => {
-    //TODO, find better global bootstrap.
-    gateway = DEV_GATEWAY
-    client.gateway = DEV_GATEWAY
-    client.console = 'https://console-aws.dev.waylay.io'
-    loaded = false
-  })
-  if (!loaded) {
-    OPENAI_API_KEY = await client.vault.get("OPENAI_API_KEY").catch(err => { })
-  }
   botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
   linkParser = new LinkParser(client)
   tippy('#help', {
-    content: "Bot version: " + botApp.version
+    content: "Bot version: " + botApp.version + ', name: ' + botApp.template.name
   });
 }
 
@@ -114,19 +103,11 @@ async function loadBot() {
     const template = await client.templates.get(settings.WoxTemplate || config.template || "WoxChat");
     console.log("template loaded", template);
     return {
-      type: "template",
       template: template,
       version: "1.0.0"
     }
   } catch (error) {
-    console.log("error loading template", error);
-    // trying to load old wox plugin
-    const sensor = await client.sensors.get(WAYLAY_BOT || config.WAYLAY_BOT || "WoxOpenAI");
-    return {
-      type: "sensor",
-      sensor: sensor,
-      version: sensor.version
-    }
+    throw new Error("error loading template", error);
   }
 }
 
@@ -213,8 +194,7 @@ const getChatResponse = async (incomingChatDiv) => {
         {
           question: userText,
           messages: messagesBotBuffer.fullReply || [],
-          openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106',
-          openAIKey: OPENAI_API_KEY
+          openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106'
         }
       )
       .then(response => {
@@ -252,25 +232,17 @@ const getChatResponse = async (incomingChatDiv) => {
 
 async function runBot(args) {
   console.log('runBot', botApp, args);
-  switch (botApp.type) {
-    case "sensor": {
-      return await client.sensors.execute(botApp.sensor.name, botApp.sensor.version, { properties: args })
+  const url = `${gateway}/rules/v1/templates/${botApp.template.name}/run`;
+  const trun = await axios.post(url, {
+    variables: 
+      args
+  }, {
+    headers: {
+      'Authorization': `Bearer ${client.token}`
     }
-    case "template": {
-      const url = `${gateway}/rules/v1/templates/${botApp.template.name}/run`;
-      const trun = await axios.post(url, {
-        variables: 
-          args
-      }, {
-        headers: {
-          'Authorization': `Bearer ${client.token}`
-        }
-      });
-      console.log("Task run:", trun);
-      return { rawData: trun.data.taskOutput };
-    }
-    default: throw new Error("wox bot application not found")
-  }
+  });
+  console.log("Task run:", trun);
+  return { rawData: trun.data.taskOutput };
 }
 
 const copyResponse = (copyBtn) => {
