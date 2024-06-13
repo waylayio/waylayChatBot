@@ -216,7 +216,7 @@ const getChatResponse = async (incomingChatDiv) => {
       runBot(
         {
           question: userText,
-          messages: messagesBotBuffer.fullReply || [],
+          messages: messagesBotBuffer.getBuffer() || [],
           openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106'
         }
       )
