@@ -144,20 +144,6 @@ const createChatElement = (content, className) => {
   return chatDiv;
 }
 
-const extractMessageText = (message) => {
-  if (message.content) {
-    if (typeof message.content === 'string') {
-      // openai style
-      return message.content
-    }
-    else if (Array.isArray(message.content) && message.content.length > 0) {
-      // AWS bedrock style
-      return message.content[message.content.length-1].text
-    }
-  }
-
-  return "no answer, please try another question"
-}
 
 const getChatResponse = async (incomingChatDiv) => {
   const pElement = document.createElement("div");
@@ -189,7 +175,7 @@ const getChatResponse = async (incomingChatDiv) => {
     })
   } else {
     if (config.DEBUG) {
-      console.log('messages prepared for the request:', messagesBotBuffer.getBuffer())
+      console.log('messages prepared for the request:', messagesBotBuffer.fullReply)
     }
     if (langMessage) {
       recognition.lang = findClosestMatch(userText)
@@ -228,7 +214,7 @@ const getChatResponse = async (incomingChatDiv) => {
           messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
           messagesBotBuffer.fullReply = response.rawData.messages
         }
-        messagesBotBuffer.lastReplyMessage = extractMessageText(messagesBotBuffer.getLatestValue())
+        messagesBotBuffer.lastReplyMessage = response.rawData.response.content || "Something went wrong, missing response! Please retry!"
         if (config.DEBUG) {
           console.log('message: last reply', messagesBotBuffer.lastReplyMessage)
         }
