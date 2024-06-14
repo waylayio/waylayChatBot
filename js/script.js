@@ -7,11 +7,6 @@ const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
-const PROD_GATEWAY = "https://api.waylay.io"; 
-const PROD_CONSOLE = "https://console.waylay.io";
-
-const DEV_GATEWAY = "https://api-aws-dev.waylay.io";
-const DEV_CONSOLE = "https://console-aws.dev.waylay.io";
 
 let userText = null;
 const SpeechRecognition =
@@ -22,14 +17,12 @@ const SpeechRecognitionEvent =
   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
-var recognition;
-var text2rule = false
-var ruleSet
+var recognition, ruleSet, client, linkParser;
+
 const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 
-var client, WAYLAY_BOT, gateway, linkParser
 var chatMessages = [];
 var currentIndex = -1;
 var eventSource;
@@ -89,14 +82,12 @@ function connectAlarms() {
 async function login(ops) {
   client = new waylay({ token: ops.token })
   // await client.withSettings()
-  gateway = PROD_GATEWAY;
-  client.gateway = PROD_GATEWAY
-  client.console = PROD_CONSOLE
+  client.gateway = config.PROD_GATEWAY
+  client.console = config.PROD_CONSOLE
   await client.tasks.list().catch(err =>
     {
-      gateway = DEV_GATEWAY;
-      client.gateway = DEV_GATEWAY
-      client.console = DEV_CONSOLE 
+      client.gateway = config.DEV_GATEWAY
+      client.console = config.DEV_CONSOLE 
     })
   botApp = await loadBot()
   slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
@@ -255,7 +246,7 @@ const getChatResponse = async (incomingChatDiv) => {
 
 async function runBot(args) {
   console.log('runBot', botApp, args);
-  const url = `${gateway}/rules/v1/templates/${botApp.template.name}/run`;
+  const url = `${client.gateway}/rules/v1/templates/${botApp.template.name}/run`;
   const trun = await axios.post(url, {
     variables: 
       args
@@ -478,9 +469,6 @@ $('#introFrame').fadeOut(4000, () => {
       })
       tippy('#notifications-btn', {
         content: 'Stream alarms'
-      })
-      tippy('#text2rule-btn', {
-        content: 'Text to rule'
       })
     }).catch(error => {
       showError("not correct token")
