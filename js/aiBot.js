@@ -52,7 +52,7 @@ class GenAIBot {
           variables: {
             question,
             messages: this.fullReply,
-            openAIModel: this.AIModel
+            model: this.AIModel
           }
         }, {
           headers: {
