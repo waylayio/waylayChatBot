@@ -7,7 +7,6 @@ const deleteButton = document.querySelector("#delete-btn");
 const templateButton = document.querySelector("#template-btn");
 const cardContainer = $(".card-container");
 
-
 let userText = null;
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -19,13 +18,11 @@ const SpeechRecognitionEvent =
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
 var recognition, ruleSet, client, linkParser;
 
-const messagesBotBuffer = new FIFOBuffer(config.bufferSize || 100)
-const messagesOKBuffer = new FIFOBuffer(config.bufferSize || 100)
-const messagesNOKBuffer = new FIFOBuffer(config.bufferSize || 100)
 
 var chatMessages = [];
 var currentIndex = -1;
 var eventSource;
+var botApp;
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -59,7 +56,6 @@ $.urlParam = function (name) {
   return decodeURI(results[1]) || 0;
 }
 
-
 function connectAlarms() {
   if(eventSource !== undefined){
     eventSource.close()
@@ -89,26 +85,19 @@ async function login(ops) {
       client.gateway = config.DEV_GATEWAY
       client.console = config.DEV_CONSOLE 
     })
-  botApp = await loadBot()
-  slackBot = await client.sensors.get("slackPostMessage").catch(err => { console.log('no slack bot configured') })
   linkParser = new LinkParser(client)
-  tippy('#help', {
-    content: "Bot version: " + botApp.version + ', name: ' + botApp.template.name
-  });
-}
-
-async function loadBot() {
-  try {
-    const settings = await client.settings();
-    const template = await client.templates.get(settings.WoxTemplate || config.template || "WoxChat");
-    console.log("template loaded", template);
-    return {
-      template: template,
-      version: "1.0.0"
-    }
+  const settings = await client.settings();
+  const template = await client.templates.get(settings.WoxTemplate || config.template || "WoxChat");
+  console.log("template loaded", template);
+  const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
+  try { 
+    botApp =  new GenAIBot(AIModel, client, template.name)
   } catch (error) {
-    throw new Error("error loading template", error);
+    throw new Error("error staring a bot", error);
   }
+  tippy('#help', {
+    content: "Bot template: " + botApp.getTemplate()
+  });
 }
 
 const loadDataFromLocalstorage = () => {
@@ -135,128 +124,51 @@ const createChatElement = (content, className) => {
   return chatDiv;
 }
 
-const extractMessageText = (message) => {
-  if (message.content) {
-    if (typeof message.content === 'string') {
-      // openai style
-      return message.content
-    }
-    else if (Array.isArray(message.content) && message.content.length > 0) {
-      // AWS bedrock style
-      return message.content[message.content.length-1].text
-    }
-  }
-
-  return "no answer, please try another question"
-}
-
 const getChatResponse = async (incomingChatDiv) => {
   const pElement = document.createElement("div");
   pElement.classList.add("markdown-body");
   pElement.style['background-color'] = 'inherit';
+  const feedback = userText.indexOf('feedback') > -1; //not in use
 
-  const slackMessage = userText.split(" ").filter(w => ['forward', 'slack', 'Slack', 'send'].includes(w)).length;
-  const feedback = userText.indexOf('feedback') > -1;
   const langMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'language'].includes(w)).length == 2;
   const templateMessage = userText.toLowerCase().split(" ").filter(w => ['set', 'bot'].includes(w)).length == 2;
 
-
-  if (slackMessage > 1) {
-    var channel = config.channel || "bot"
-    var text = !feedback ? messagesBotBuffer.lastReplyMessage : JSON.stringify({
-      positiveMessages: messagesOKBuffer.getBuffer(),
-      negativeMessages: messagesNOKBuffer.getBuffer()
-    })
-    client.sensors.execute(slackBot.name, slackBot.version, {
-      properties: {
-        channel, text
-      }
-    }).then(response => {
-      pElement.innerHTML = "<p>message forwarded to " + channel + " channel</p>"
-    }).catch(error => {
-    }).finally(() => {
-      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    })
-  } else {
-    if (config.DEBUG) {
-      console.log('messages prepared for the request:', messagesBotBuffer.getBuffer())
-    }
-    if (langMessage) {
-      recognition.lang = findClosestMatch(userText)
-      const className = "fi fi-"+ recognition.lang.slice(-2).toLowerCase();
-      $("#flag").removeClass();
-      $("#flag").addClass(className);
-      pElement.innerHTML = "<p>set language to: " + recognition.lang + "</p>"
-      incomingChatDiv.querySelector(".typing-animation").remove();
-      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    } 
-    if (templateMessage) {
-      var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.template.name
-      botApp.template.name = _template
-      pElement.innerHTML = "<p>set bot to: " + _template+ "</p>"
-      incomingChatDiv.querySelector(".typing-animation").remove();
-      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-      chatContainer.scrollTo(0, chatContainer.scrollHeight);
-      tippy('#help', {
-        content: "Bot version: " + botApp.version + ', name: ' + botApp.template.name
-      });
-    }
-    else {
-      runBot(
-        {
-          question: userText,
-          messages: messagesBotBuffer.fullReply || [],
-          openAIModel: config.openAIModel || 'gpt-3.5-turbo-1106'
-        }
-      )
-      .then(response => {
-        if (config.DEBUG) {
-          console.log('message: response', response.rawData.messages)
-        }
-        if (response.rawData.messages.length > 1) {
-          messagesBotBuffer.push(response.rawData.messages[response.rawData.messages.length - 1])
-          messagesBotBuffer.fullReply = response.rawData.messages
-        }
-        messagesBotBuffer.lastReplyMessage = extractMessageText(messagesBotBuffer.getLatestValue())
-        if (config.DEBUG) {
-          console.log('message: last reply', messagesBotBuffer.lastReplyMessage)
-        }
-        messagesBotBuffer.lastQuestion = userText;
-        pElement.innerHTML = linkParser.parse(marked.parse(messagesBotBuffer.lastReplyMessage))
-      })
-      .catch(error => {
-        if (config.DEBUG) {
-          console.log('message: error', error)
-        }
-        pElement.classList.add("error");
-        pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
-      })
-      .finally(() => {
-        // Remove the typing animation, append the paragraph element and save the chats to local storage
-        incomingChatDiv.querySelector(".typing-animation")?.remove();
-        incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
-        localStorage.setItem("all-chats", chatContainer.innerHTML);
-        chatContainer.scrollTo(0, chatContainer.scrollHeight);
-      })
-    }
+  if (langMessage) {
+    recognition.lang = findClosestMatch(userText)
+    const className = "fi fi-"+ recognition.lang.slice(-2).toLowerCase();
+    $("#flag").removeClass();
+    $("#flag").addClass(className);
+    pElement.innerHTML = "<p>set language to: " + recognition.lang + "</p>"
+    incomingChatDiv.querySelector(".typing-animation").remove();
+    incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  } 
+  else if (templateMessage) {
+    var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.getTemplate()
+    pElement.innerHTML = "<p>set bot to: " + _template+ "</p>"
+    botApp.template = _template
+    botApp.reset()
+    incomingChatDiv.querySelector(".typing-animation").remove();
+    incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    tippy('#help', {
+      content: "Bot template: " + botApp.getTemplate()
+    });
   }
-}
-
-async function runBot(args) {
-  console.log('runBot', botApp, args);
-  const url = `${client.gateway}/rules/v1/templates/${botApp.template.name}/run`;
-  const trun = await axios.post(url, {
-    variables: 
-      args
-  }, {
-    headers: {
-      'Authorization': `Bearer ${client.token}`
+  else {
+    try {
+      const response = await botApp.runBot(userText)
+      pElement.innerHTML = linkParser.parse(marked.parse(response.lastReplyMessage))
+    } catch(error){
+      pElement.classList.add("error");
+      pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";
     }
-  });
-  console.log("Task run:", trun);
-  return { rawData: trun.data.taskOutput };
+    // Remove the typing animation, append the paragraph element and save the chats to local storage
+    incomingChatDiv.querySelector(".typing-animation")?.remove();
+    incomingChatDiv.querySelector(".chat-details")?.appendChild(pElement);
+    localStorage.setItem("all-chats", chatContainer.innerHTML);
+    chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  }
 }
 
 const copyResponse = (copyBtn) => {
@@ -269,10 +181,10 @@ const copyResponse = (copyBtn) => {
 
 const okResponse = (copyBtn) => {
   messagesOKBuffer.push({
-    question: messagesBotBuffer.lastQuestion,
-    response: messagesBotBuffer.lastReplyMessage,
-    fullReply: messagesBotBuffer.fullReply,
-    version: botApp.version,
+    question: botApp.getLastQuestion(),
+    response: botApp.getLastReplyMessage(),
+    fullReply: botApp.getFullReply(),
+    template: botApp.getTemplate(),
     domain: client.domain
   })
   copyBtn.textContent = "done";
@@ -284,10 +196,10 @@ const okResponse = (copyBtn) => {
 
 const nokResponse = (copyBtn) => {
   messagesNOKBuffer.push({
-    question: messagesBotBuffer.lastQuestion,
-    response: messagesBotBuffer.lastReplyMessage,
-    fullReply: messagesBotBuffer.fullReply,
-    version: botApp.version,
+    question: botApp.getLastQuestion(),
+    response: botApp.getLastReplyMessage(),
+    fullReply: botApp.getFullReply(),
+    template: botApp.getTemplate(),
     domain: client.domain
   })
   copyBtn.textContent = "done";
@@ -347,7 +259,6 @@ const handleOutgoingChat = (text, delay = 500) => {
   setTimeout(showTypingAnimation, delay);
 }
 
-
 showError = function (error) {
   const html = `<div class="chat-content">
                     <div class="chat-details">
@@ -372,8 +283,9 @@ showError = function (error) {
 deleteButton.addEventListener("click", () => {
   localStorage.removeItem("all-chats");
   loadDataFromLocalstorage();
-  messagesBotBuffer.clearBuffer();
-  messagesBotBuffer.fullReply = [];
+  if(botApp){
+    botApp.reset()
+  }
 });
 
 themeButton.addEventListener("click", () => {
@@ -477,18 +389,3 @@ $('#introFrame').fadeOut(4000, () => {
     showError("You need a token to login.")
   }
 })
-
-// $(document).ready(function () {
-//   $('#introFrame').fadeOut(4000, () => {
-//     loadDataFromLocalstorage();
-//     if ($.urlParam('token')) {
-//       login({ token: $.urlParam('token') }).then(response => {
-//         console.log("application loaded")
-//       }).catch(error => {
-//         showError("not correct token")
-//       })
-//     } else {
-//       showError("You need a token to login.")
-//     }
-//   })
-// });
