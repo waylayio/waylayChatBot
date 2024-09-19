@@ -180,13 +180,7 @@ const copyResponse = (copyBtn) => {
 }
 
 const okResponse = (copyBtn) => {
-  messagesOKBuffer.push({
-    question: botApp.getLastQuestion(),
-    response: botApp.getLastReplyMessage(),
-    fullReply: botApp.getFullReply(),
-    template: botApp.getTemplate(),
-    domain: client.domain
-  })
+//TODO, take the answer and add it to the feedback OK buffer
   copyBtn.textContent = "done";
   setTimeout(() => {
     copyBtn.textContent = "thumb_up";
@@ -195,13 +189,7 @@ const okResponse = (copyBtn) => {
 }
 
 const nokResponse = (copyBtn) => {
-  messagesNOKBuffer.push({
-    question: botApp.getLastQuestion(),
-    response: botApp.getLastReplyMessage(),
-    fullReply: botApp.getFullReply(),
-    template: botApp.getTemplate(),
-    domain: client.domain
-  })
+//TODO, take the answer and add it to the feedback NOK buffer
   copyBtn.textContent = "done";
   setTimeout(() => {
     copyBtn.textContent = "thumb_down";
