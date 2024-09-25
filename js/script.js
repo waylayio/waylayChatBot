@@ -124,6 +124,15 @@ const createChatElement = (content, className) => {
   return chatDiv;
 }
 
+function addIframe(parent, content) {
+  var iframe = document.createElement("iframe");
+  iframe.srcdoc = content;
+  iframe.width = '100%';
+  iframe.height = '500';
+  parent.style.height = '520'
+  parent.appendChild(iframe);
+}
+
 const getChatResponse = async (incomingChatDiv) => {
   const pElement = document.createElement("div");
   pElement.classList.add("markdown-body");
@@ -158,7 +167,12 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
-      pElement.innerHTML = linkParser.parse(marked.parse(response.lastReplyMessage))
+      const res = linkParser.parse(marked.parse(response.lastReplyMessage))
+      if(res.iframe){
+        addIframe(incomingChatDiv.querySelector(".chat-content"),res.text)
+      }
+      else 
+        pElement.innerHTML = res.text
     } catch(error){
       pElement.classList.add("error");
       pElement.innerHTML = "<p>Oops! Something went wrong while retrieving the response. Please try again.</p>";

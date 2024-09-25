@@ -20,8 +20,13 @@ class LinkParser {
     }
 
     parse(inputString) {
-        const lines = inputString.split('\n');
-        return lines.map(line => this.parseID(line)).join('\n')
+        if(inputString.indexOf('!DOCTYPE html') > -1){
+            return {iframe: true, text: inputString.substring(inputString.indexOf('!DOCTYPE html') - 4).replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;",'\"')}
+        } else {
+            const lines = inputString.split('\n');
+            return {iframe: false, text: lines.map(line => this.parseID(line)).join('\n') }
+        }
+
     }
 
 }
