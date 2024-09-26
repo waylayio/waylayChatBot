@@ -21,7 +21,8 @@ class LinkParser {
 
     parse(inputString) {
         if(inputString.indexOf('!DOCTYPE html') > -1){
-            return {iframe: true, text: inputString.substring(inputString.indexOf('!DOCTYPE html') - 4).replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;",'\"')}
+            const text = inputString.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;",'\"')
+            return {iframe: true, text: text.substring(text.indexOf('<!DOCTYPE html'))}
         } else {
             const lines = inputString.split('\n');
             return {iframe: false, text: lines.map(line => this.parseID(line)).join('\n') }
