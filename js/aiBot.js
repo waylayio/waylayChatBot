@@ -62,15 +62,18 @@ class GenAIBot {
       } catch (error) {
         throw new Error("error running bot", error);
       }
-      if(trun.data === undefined || trun.data.taskOutput === undefined) {
-        throw new Error("error running bot, there is no output in the template", error);
+      if(trun.data === undefined) {
+        throw new Error("error running the bot, template failed to run", error);
+      } else if(trun.data.taskOutput === undefined) {
+        this.reset()
+        throw new Error("error running the bot, I will reset the cache, please try again", error);
       }
       const response = trun.data.taskOutput;
       if(response.messages.length > 1) {
         this.fullReply = response.messages;
         this.lastReplyMessage = this._extractMessageText(response.messages[response.messages.length - 1])
       } else {
-        throw new Error("error running bot, there are no messages in the output", error);
+        throw new Error("error running the bot, there are no messages in the response", error);
       }
       return {
         fullReply: this.fullReply,
