@@ -21,7 +21,7 @@ class LinkParser {
 
     parse(inputString) {
         if(inputString.indexOf('!DOCTYPE html') > -1){
-            const text = inputString.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;",'\"').replaceAll("<code>",'').replaceAll("<pre>",'').replaceAll("</code>",'').replaceAll("</pre>",'')
+            const text = inputString.replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&#39;", "'").replaceAll("&quot;",'\"').replaceAll("<code>",'').replaceAll("<pre>",'').replaceAll("</code>",'').replaceAll("</pre>",'').replaceAll("&amp;",'&')  
             return {iframe: true, text: text.substring(text.indexOf('<!DOCTYPE html'))}
         } else {
             const lines = inputString.split('\n');
