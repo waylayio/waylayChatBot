@@ -23,6 +23,7 @@ var chatMessages = [];
 var currentIndex = -1;
 var eventSource;
 var botApp;
+var boostrapTemplate;
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -87,13 +88,13 @@ async function login(ops) {
     })
   linkParser = new LinkParser(client)
   const settings = await client.settings();
-  const template = await client.templates.get(settings.WoxTemplate || config.template || "WoxChat");
+  const template = await client.templates.get(boostrapTemplate || settings.WoxTemplate || config.template || "WoxChat");
   console.log("template loaded", template);
   const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
   try { 
     botApp =  new GenAIBot(AIModel, client, template.name)
   } catch (error) {
-    throw new Error("error staring a bot", error);
+    throw new Error("error starting a bot", error);
   }
   tippy('#help', {
     content: "Bot template: " + botApp.getTemplate()
@@ -367,6 +368,7 @@ $('.icons').on('click', function () {
 $('#introFrame').fadeOut(4000, () => {
   loadDataFromLocalstorage();
   if ($.urlParam('token')) {
+    boostrapTemplate = $.urlParam('template')
     login({ token: $.urlParam('token') }).then(response => {
       console.log("application loaded")
       tippy('#theme-btn', {
@@ -385,7 +387,7 @@ $('#introFrame').fadeOut(4000, () => {
         content: 'Stream alarms'
       })
     }).catch(error => {
-      showError("not correct token")
+      showError("Bot not loaded " + error)
     })
   } else {
     showError("You need a token to login.")
