@@ -365,6 +365,12 @@ $('.icons').on('click', function () {
   id.toggle(350);
 });
 
+if($.urlParam('introImage')){
+  document.getElementById('introImage').src = $.urlParam('introImage')
+} else {
+  document.getElementById('introImage').src = "images/intro.jpeg"
+}
+
 $('#introFrame').fadeOut(4000, () => {
   loadDataFromLocalstorage();
   if ($.urlParam('token')) {
