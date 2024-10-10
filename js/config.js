@@ -27,7 +27,7 @@ const config = {
     {
       title: "Task queries",
       icon: "flowsheet",
-      expandIcon: "expand_less",
+      expandIcon: "expand_more",
       queries: [
         "List RUNNING tasks",
         "Count RUNNING tasks",
@@ -43,7 +43,7 @@ const config = {
     {
       title: "Resource queries",
       icon: "precision_manufacturing",
-      expandIcon: "expand_less",
+      expandIcon: "expand_more",
       queries: [
         "List resources of type RESOURCE TYPE",
         "Next page (fetches the next page in the list)",
