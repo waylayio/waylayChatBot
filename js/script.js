@@ -4,8 +4,10 @@ const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
 const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
-const templateButton = document.querySelector("#template-btn");
+const cardsButton = document.querySelector("#cards-btn");
 const cardContainer = $(".card-container");
+const cardsContainerEl = document.getElementById('card-container');
+
 
 let userText = null;
 const SpeechRecognition =
@@ -55,6 +57,46 @@ $.urlParam = function (name) {
     return null;
   }
   return decodeURI(results[1]) || 0;
+}
+
+function createCards(cards) {
+  cards.forEach(card => {
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'card';
+    const cardContent = document.createElement('div');
+    cardContent.className = 'card-content';
+    const cardHeader = document.createElement('h5');
+    cardHeader.innerHTML = `
+      <span class="material-symbols-rounded">${card.icon}</span>&nbsp;&nbsp; 
+      ${card.title}
+      <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">${card.expandIcon}</span>
+    `;
+
+    const ul = document.createElement('ul');
+    ul.style.display = 'none';
+    card.queries.forEach(query => {
+      const li = document.createElement('li');
+      li.textContent = query;
+      li.addEventListener('click', (e) => {
+        e.stopPropagation(); 
+        console.log(query);  // Log the clicked query content
+        $("#chat-input").text(query);
+        handleOutgoingChat(query);
+      });
+
+      ul.appendChild(li);
+    });
+
+    cardContent.appendChild(cardHeader);
+    cardContent.appendChild(ul);
+    cardHeader.addEventListener('click', () => {
+      const isExpanded = ul.style.display === 'block';
+      ul.style.display = isExpanded ? 'none' : 'block';
+      cardHeader.querySelector('.icons').textContent = isExpanded ? 'expand_more' : 'expand_less';
+    });
+    cardDiv.appendChild(cardContent);
+    cardsContainerEl.appendChild(cardDiv);
+  });
 }
 
 function connectAlarms() {
@@ -343,8 +385,8 @@ $('#record').click(function () {
 
 sendButton.addEventListener("click", handleOutgoingChat);
 
-templateButton.addEventListener("click", () => {
-  var icon = $('#template-btn');
+cardsButton.addEventListener("click", () => {
+  var icon = $('#cards-btn');
   icon.toggleClass('up');
   if (icon.hasClass('up')) {
     cardContainer.fadeOut(350)
@@ -377,6 +419,14 @@ $('#introFrame').fadeOut(4000, () => {
     boostrapTemplate = $.urlParam('template')
     login({ token: $.urlParam('token') }).then(response => {
       console.log("application loaded")
+      if($.urlParam('cardData')) {
+        client.resources.get($.urlParam('cardData')).then( cardData =>
+          createCards(cardData.cards)
+        )
+      } else {
+        const cardData = config.cardData || []
+        createCards(cardData)
+      }
       tippy('#theme-btn', {
         content: 'Toggle theme'
       })
@@ -386,8 +436,8 @@ $('#introFrame').fadeOut(4000, () => {
       tippy('#record', {
         content: 'Talk to bot'
       })
-      tippy('#template-btn', {
-        content: 'Examples'
+      tippy('#cards-btn', {
+        content: 'Help'
       })
       tippy('#notifications-btn', {
         content: 'Stream alarms'

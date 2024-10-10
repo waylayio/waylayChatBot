@@ -18,66 +18,7 @@
     <img id="introImage" style='height: 100%; width: 100%; object-fit: contain'>
   </div>
   <!-- Chats container -->
-  <div style="display:none; position: absolute; top: 40px; right: 10px; opacity: 0.9;" class="card-container">
-    <div class="card">
-      <div class="card-content">
-        <h5><span class="material-symbols-rounded">notifications</span>&nbsp; &nbsp; Alarm queries<span
-            class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span></h5>
-        <ul>
-          <li>List all alarms</li>
-          <li>Last triggered alarm</li>
-          <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
-          <li>List alarms with severity CRITICAL</li>
-          <li>Describe why was the alarm with ALARM ID raised</li>
-          <li>What is the root cause for alarm ALARM ID?</li>
-          <li>Describe what does the task that raised alarm ALARM ID do?</li>
-          <li>Are there alarms on resource X?</li>
-          <li>Give me the last alarm on resource X</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-content">
-        <h5><span class="material-symbols-rounded">flowsheet</span>&nbsp; &nbsp; Task queries<span
-            class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_less</span></h5>
-        <ul style="display: none">
-          <li>List RUNNING tasks</li>
-          <li>Count RUNNING tasks</li>
-          <li>Describe what does the task TID do?</li>
-          <li>Summarize the alarm(s) triggered by task TID</li>
-          <li>Describe the alarm(s) triggered by task TID including the values that triggered them.</li>
-          <li>What are the tasks executed on resource X?</li>
-          <li>List RUNNING tasks on resource X</li>
-          <li>Explain me the logic of this task</li>
-          <li>Tell me the values that this task has collected</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-content">
-        <h5><span class="material-symbols-rounded">precision_manufacturing</span>&nbsp; &nbsp; Resource queries<span
-            class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_less</span></h5>
-        <ul style="display: none">
-          <li>List resources of type RESOURCE TYPE</li>
-          <li>Next page (fetches the next page in the list)</li>
-          <li>Count resources named "NAME"</li>
-          <li>Count resources of type RESOURCE TYPE</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-content">
-        <h5><span class="material-symbols-rounded">browse_activity</span>&nbsp; &nbsp; Complex queries<span
-            class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_less</span></h5>
-        <ul style="display: none">
-          <li>Open the first alarm then find the task and then tell me what's the problem</li>
-        </ul>
-      </div>
-    </div>
-
+  <div style="display:none; position: absolute; top: 40px; right: 10px; opacity: 0.9;" class="card-container" id="card-container">
   </div>
 
   <div class="chat-container"></div>
@@ -93,7 +34,7 @@
         <span id="record" class="material-symbols-rounded">mic</span>
         <span id="delete-btn" class="material-symbols-rounded">delete</span>
         <span id="notifications-btn" class="material-symbols-rounded">notifications_active</span>
-        <span id="template-btn" class="material-symbols-rounded up">note_stack</span>
+        <span id="cards-btn" class="material-symbols-rounded up">note_stack</span>
       </div>
       <div style="display: inline-block; position: absolute; right: 1%;">
         <span id="help" class="material-symbols-rounded">help</span>

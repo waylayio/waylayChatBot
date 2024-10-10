@@ -341,6 +341,10 @@ span.material-symbols-rounded {
   margin-left: 15px;
 }
 
+.card ul li:hover {
+  background: var(--icon-hover-bg);
+}
+
 .card-content {
   padding: 5px;
   font-family: Arial, sans-serif;
