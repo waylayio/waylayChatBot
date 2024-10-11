@@ -5,8 +5,13 @@ const themeButton = document.querySelector("#theme-btn");
 const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
 const cardsButton = document.querySelector("#cards-btn");
+const logsButton = document.querySelector("#logs-btn");
 const cardContainer = $(".card-container");
 const cardsContainerEl = document.getElementById('card-container');
+const modal = document.getElementById("logModal");
+const openModalBtn = document.getElementById("openModalBtn");
+const logList = document.getElementById("logList");
+const closeModalBtn = document.querySelector(".close");
 
 
 let userText = null;
@@ -26,6 +31,7 @@ var currentIndex = -1;
 var eventSource;
 var botApp;
 var boostrapTemplate;
+var logs = []
 
 if (speachEnabled) {
   recognition = new SpeechRecognition();
@@ -210,6 +216,7 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
+      logs = response.logs
       const res = linkParser.parse(marked.parse(response.lastReplyMessage))
       if(res.iframe){
         addIframe(incomingChatDiv.querySelector(".chat-content"),res.text)
@@ -397,6 +404,31 @@ cardsButton.addEventListener("click", () => {
   }
 });
 
+closeModalBtn.onclick = function() {
+  modal.style.display = "none";
+};
+
+window.onclick = function(event) {
+  if (event.target == modal) {
+      modal.style.display = "none";
+  }
+};
+
+logsButton.addEventListener("click", () => {
+  modal.style.display = "block";
+  logList.innerHTML = ""; 
+  logs.forEach(log => {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `
+          <span class="time">Time:</span> ${log.time}<br>
+          <span class="level">Level:</span> ${log.level}<br>
+          <span class="message">Message:</span> ${log.message}
+      `;
+      logList.appendChild(listItem);
+  });
+});
+
+
 $('.icons').on('click', function () {
   var id = $(this).closest('.card-content').find('ul')
   if (id.is(':visible')) {
@@ -437,6 +469,9 @@ $('#introFrame').fadeOut(4000, () => {
         content: 'Talk to bot'
       })
       tippy('#cards-btn', {
+        content: 'Help'
+      })
+      tippy('#logs-btn', {
         content: 'Help'
       })
       tippy('#notifications-btn', {

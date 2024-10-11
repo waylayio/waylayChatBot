@@ -17,10 +17,18 @@
   <div id="introFrame">
     <img id="introImage" style='height: 100%; width: 100%; object-fit: contain'>
   </div>
-  <!-- Chats container -->
   <div style="display:none; position: absolute; top: 40px; right: 10px; opacity: 0.9;" class="card-container" id="card-container">
   </div>
+        
+  <div id="logModal" class="modal">
+    <div class="modal-content log">
+        <span class="close">&times;</span>
+        <h2>Logs</h2>
+        <ul id="logList"></ul>
+    </div>
+</div>
 
+  <!-- Chats container -->
   <div class="chat-container"></div>
   <!-- Typing container -->
   <div class="typing-container">
@@ -35,10 +43,12 @@
         <span id="delete-btn" class="material-symbols-rounded">delete</span>
         <span id="notifications-btn" class="material-symbols-rounded">notifications_active</span>
         <span id="cards-btn" class="material-symbols-rounded up">note_stack</span>
+        <span id="logs-btn" class="material-symbols-rounded up">rule</span>
       </div>
       <div style="display: inline-block; position: absolute; right: 1%;">
         <span id="help" class="material-symbols-rounded">help</span>
       </div>
+
       <div style="display: inline-block; position: absolute; left: 15px;">
         <span style="width: 20px; opacity: 0.75" id="flag" class="fi fi-us"></span>
       </div>
