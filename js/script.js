@@ -472,7 +472,7 @@ $('#introFrame').fadeOut(4000, () => {
         content: 'Help'
       })
       tippy('#logs-btn', {
-        content: 'Help'
+        content: 'Logs'
       })
       tippy('#notifications-btn', {
         content: 'Stream alarms'
