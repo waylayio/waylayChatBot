@@ -218,7 +218,9 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
-      logs = response.logs
+      logs = response.logs.filter(log => {
+        return !log.message.toLowerCase().includes("descriptor".toLowerCase())
+      })
       const res = linkParser.parse(marked.parse(response.lastReplyMessage))
       if(res.iframe){
         addIframe(incomingChatDiv.querySelector(".chat-content"),res.text)
