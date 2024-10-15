@@ -12,6 +12,8 @@ const modal = document.getElementById("logModal");
 const openModalBtn = document.getElementById("openModalBtn");
 const logList = document.getElementById("logList");
 const closeModalBtn = document.querySelector(".close");
+const searchInput = document.getElementById("searchInput");
+
 
 
 let userText = null;
@@ -404,6 +406,18 @@ cardsButton.addEventListener("click", () => {
   }
 });
 
+$('.icons').on('click', function () {
+  var id = $(this).closest('.card-content').find('ul')
+  if (id.is(':visible')) {
+    $(this).text('expand_less')
+  } else {
+    $(this).text('expand_more')
+  }
+  id.toggle(350);
+});
+
+
+//logs part
 closeModalBtn.onclick = function() {
   modal.style.display = "none";
 };
@@ -416,28 +430,54 @@ window.onclick = function(event) {
 
 logsButton.addEventListener("click", () => {
   modal.style.display = "block";
-  logList.innerHTML = ""; 
-  logs.forEach(log => {
+  displayLogs(logs)
+});
+
+searchInput.addEventListener('input', function() {
+  const searchText = searchInput.value.trim();
+  filterLogs(searchText);
+});
+
+function displayLogs(logsToDisplay) {
+  logList.innerHTML = "";  // Clear previous logs
+  logsToDisplay.forEach(log => {
       const listItem = document.createElement("li");
       listItem.innerHTML = `
           <span class="time">Time:</span> ${log.time}<br>
           <span class="level">Level:</span> ${log.level}<br>
-          <span class="message">Message:</span> ${log.message}
+          <span class="message">Message:</span> <span class="logs">${log.message}</span>
       `;
       logList.appendChild(listItem);
   });
-});
+}
 
-
-$('.icons').on('click', function () {
-  var id = $(this).closest('.card-content').find('ul')
-  if (id.is(':visible')) {
-    $(this).text('expand_less')
+function filterLogs(text) {
+  if (!text) {
+      displayLogs(logs);
   } else {
-    $(this).text('expand_more')
+      const filteredLogs = logs.filter(log => log.message.toLowerCase().includes(text.toLowerCase()));
+      displayLogs(filteredLogs);
+      highlightSearch(text);
   }
-  id.toggle(350);
-});
+}
+
+function highlightSearch(text) {
+  const logsDisplayed = document.querySelectorAll('#logList li');
+
+  logsDisplayed.forEach(item => {
+      const messageElement = item.querySelector('.logs');
+      const messageText = messageElement.innerHTML;
+      const cleanedText = messageText.replace(/<span class="highlight">|<\/span>/g, '');
+      if (text) {
+          const regex = new RegExp(`(${text})`, 'gi');
+          const highlightedText = cleanedText.replace(regex, '<span class="highlight">$1</span>');
+          messageElement.innerHTML = highlightedText;
+      } else {
+          messageElement.innerHTML = cleanedText;
+      }
+  });
+}
+
 
 if($.urlParam('introImage')){
   document.getElementById('introImage').src = $.urlParam('introImage')
@@ -445,6 +485,7 @@ if($.urlParam('introImage')){
   document.getElementById('introImage').src = "images/intro.jpeg"
 }
 
+//MAIN
 $('#introFrame').fadeOut(4000, () => {
   loadDataFromLocalstorage();
   if ($.urlParam('token')) {

@@ -420,6 +420,11 @@ span.material-symbols-rounded {
   color: #27ae60;
 }
 
+.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}
+
 .tooltip {
   position: relative;
   display: inline-block;
