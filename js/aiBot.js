@@ -27,6 +27,18 @@ class GenAIBot {
     getFullReply() {
       return this.getFullReply;
     }
+
+    async getSystemMessage() {
+      const template = await client.templates.get(this.template);
+      var aINode = template.nodes.find(node=> node.properties.sensor && node.properties.sensor.requiredProperties.find(a=>a["system"] !== undefined))
+      return aINode?.properties?.sensor?.requiredProperties?.find(a=>a["system"])?.system
+    }
+
+    async getAgents() {
+      const template = await client.templates.get(this.template);
+      const agents =  template.nodes.filter(a => a.properties.sensor.requiredProperties.find(b=>b.system) === undefined)
+      return agents.map(n=>  n.name)
+    }
   
     _extractMessageText = (message) => {
       if (message.content) {
