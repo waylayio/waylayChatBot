@@ -156,7 +156,7 @@ const loadDataFromLocalstorage = () => {
 
   document.body.classList.toggle("light-mode", themeColor === "light_mode");
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-  document.documentElement.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark");
+  document.querySelector(".markdown-body")?.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark");
 
   const defaultText = `<div class="squeeze-and-disappear default-text">
                             <h1>Waylay iBot</h1>
@@ -171,7 +171,7 @@ themeButton.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
   localStorage.setItem("themeColor", themeButton.innerText);
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-  document.documentElement.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark");
+  document.querySelector(".markdown-body")?.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark");
 
 });
 
