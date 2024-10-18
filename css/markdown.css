@@ -1,4 +1,4 @@
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) { */
 
   .markdown-body,
   [data-theme="dark"] {
@@ -54,9 +54,9 @@
     --color-done-fg: #a371f7;
     --color-done-emphasis: #8957e5;
   }
-}
+/* }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: light) { */
 
   .markdown-body,
   [data-theme="light"] {
@@ -112,7 +112,7 @@
     --color-done-fg: #8250df;
     --color-done-emphasis: #8250df;
   }
-}
+/* } */
 
 .markdown-body {
   -ms-text-size-adjust: 100%;
