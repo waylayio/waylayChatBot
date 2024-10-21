@@ -108,6 +108,7 @@ function createCards(cards) {
 }
 
 function createAgentCards(agents) {
+  const count = agents.length
   const cardDiv = document.createElement('div');
   cardDiv.className = 'card';
   const cardContent = document.createElement('div');
@@ -115,7 +116,7 @@ function createAgentCards(agents) {
   const cardHeader = document.createElement('h5');
   cardHeader.innerHTML = `
     <span class="material-symbols-rounded">support_agent</span>&nbsp;&nbsp; 
-    Agents
+    Agents (${count})
     <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span>`;
     const ul = document.createElement('ul');
     ul.style.display = 'none';
