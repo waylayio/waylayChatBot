@@ -37,7 +37,7 @@ class GenAIBot {
     async getAgents() {
       const template = await client.templates.get(this.template);
       const agents =  template.nodes.filter(a => a.properties.sensor?.requiredProperties.find(b=>b.system) === undefined)
-      return agents.map(n=>  n.name)
+      return agents.map(n=>  n.name).filter(a=> (a.indexOf("AND") === -1 && a.indexOf("TaskOut") === -1) )
     }
   
     _extractMessageText = (message) => {

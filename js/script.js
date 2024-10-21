@@ -87,7 +87,7 @@ function createCards(cards) {
       li.textContent = query;
       li.addEventListener('click', (e) => {
         e.stopPropagation(); 
-        console.log(query);  // Log the clicked query content
+        console.log(query);
         $("#chat-input").text(query);
         handleOutgoingChat(query);
       });
@@ -105,6 +105,34 @@ function createCards(cards) {
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
   });
+}
+
+function createAgentCards(agents) {
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'card';
+  const cardContent = document.createElement('div');
+  cardContent.className = 'card-content';
+  const cardHeader = document.createElement('h5');
+  cardHeader.innerHTML = `
+    <span class="material-symbols-rounded">support_agent</span>&nbsp;&nbsp; 
+    Agents
+    <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span>`;
+    const ul = document.createElement('ul');
+    ul.style.display = 'none';
+    agents.forEach(agent => {
+      const li = document.createElement('li');
+      li.textContent = agent;
+      ul.appendChild(li);
+    });
+    cardContent.appendChild(cardHeader);
+    cardContent.appendChild(ul);
+    cardHeader.addEventListener('click', () => {
+      const isExpanded = ul.style.display === 'block';
+      ul.style.display = isExpanded ? 'none' : 'block';
+      cardHeader.querySelector('.icons').textContent = isExpanded ? 'expand_more' : 'expand_less';
+    });
+    cardDiv.appendChild(cardContent);
+    cardsContainerEl.appendChild(cardDiv);
 }
 
 function connectAlarms() {
@@ -143,6 +171,7 @@ async function login(ops) {
   const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
   try { 
     botApp =  new GenAIBot(AIModel, client, template.name)
+    botApp.getAgents().then(agents => createAgentCards(agents))
   } catch (error) {
     throw new Error("error starting a bot", error);
   }
@@ -173,7 +202,7 @@ themeButton.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
   localStorage.setItem("themeColor", themeButton.innerText);
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-  
+
   const markdownBodies = document.querySelectorAll('.markdown-body');
   markdownBodies.forEach(element => 
     element.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark") )
