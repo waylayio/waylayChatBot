@@ -36,7 +36,7 @@ class GenAIBot {
 
     async getAgents() {
       const template = await client.templates.get(this.template);
-      const agents =  template.nodes.filter(a => a.properties.sensor.requiredProperties.find(b=>b.system) === undefined)
+      const agents =  template.nodes.filter(a => a.properties.sensor?.requiredProperties.find(b=>b.system) === undefined)
       return agents.map(n=>  n.name)
     }
   
