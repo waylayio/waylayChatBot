@@ -478,10 +478,6 @@ span.material-symbols-rounded {
   flex-grow: 1;
   width: 100%;
   height: 100%;
-  white-space: pre-wrap;
-  font-size: 1.2rem;
-  color: var(--text-color);
-  word-break: break-word;
   box-sizing: border-box; 
 }
 
