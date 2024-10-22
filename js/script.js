@@ -437,9 +437,9 @@ cardsButton.addEventListener("click", () => {
   icon.toggleClass('up');
   if (icon.hasClass('up')) {
     cardContainer.fadeOut(350)
-    icon.text('note_stack');
+    icon.text('live_help');
   } else {
-    icon.text('stack');
+    icon.text('help_center');
     cardContainer.fadeIn(350)
   }
 });
