@@ -1,8 +1,7 @@
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
 
   .markdown-body,
   [data-theme="dark"] {
-    /*dark*/
     color-scheme: dark;
     --color-prettylights-syntax-comment: #8b949e;
     --color-prettylights-syntax-constant: #79c0ff;
@@ -54,13 +53,12 @@
     --color-done-fg: #a371f7;
     --color-done-emphasis: #8957e5;
   }
-}
+} */
 
-@media (prefers-color-scheme: light) { 
+/* @media (prefers-color-scheme: light) { 
 
   .markdown-body,
   [data-theme="light"] {
-    /*light*/
     color-scheme: light;
     --color-prettylights-syntax-comment: #57606a;
     --color-prettylights-syntax-constant: #0550ae;
@@ -112,14 +110,14 @@
     --color-done-fg: #8250df;
     --color-done-emphasis: #8250df;
   }
-}
+} */
 
 .markdown-body {
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   margin: 0;
-  /* color: var(--color-fg-default);
-  background-color: var(--color-canvas-default); */
+  color: var(--color-fg-default);
+  background-color: var(--color-canvas-default);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 16px;
   line-height: 1.5;
