@@ -71,9 +71,10 @@ class GenAIBot {
         throw new Error("error running the bot, I will reset the cache, please try again", error);
       }
       const response = ret.taskOutput;
-      if(response.messages.length > 1) {
-        this.fullReply = response.messages;
-        this.lastReplyMessage = this._extractMessageText(response.messages[response.messages.length - 1])
+      const messages = response.messages || response.context?.messages
+      if(messages.length > 1) {
+        this.fullReply = messages;
+        this.lastReplyMessage = this._extractMessageText(messages[messages.length - 1])
       } else {
         throw new Error("error running the bot, there are no messages in the response", error);
       }
