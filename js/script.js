@@ -8,13 +8,16 @@ const cardsButton = document.querySelector("#cards-btn");
 const logsButton = document.querySelector("#logs-btn");
 const cardContainer = $(".card-container");
 const cardsContainerEl = document.getElementById('card-container');
-const modal = document.getElementById("logModal");
+const logModal = document.getElementById("logModal");
+const systemModal = document.getElementById("systemModal");
 const openModalBtn = document.getElementById("openModalBtn");
 const logList = document.getElementById("logList");
-const closeModalBtn = document.querySelector(".close");
+const closeModalBtn = document.getElementById("close-log");
+const closeSysModalBtn = document.getElementById("close-sys");
 const searchInput = document.getElementById("searchInput");
-
-
+const systemButton = document.querySelector("#system-btn");
+var systemTextArea = document.getElementById("systemTextArea");
+var submitBtn = document.getElementById("submitBtn");
 
 let userText = null;
 const SpeechRecognition =
@@ -455,19 +458,37 @@ $('.icons').on('click', function () {
 });
 
 
-//logs part
 closeModalBtn.onclick = function() {
-  modal.style.display = "none";
+  logModal.style.display = "none";
+};
+
+closeSysModalBtn.onclick = function() {
+  systemModal.style.display = "none";
 };
 
 window.onclick = function(event) {
-  if (event.target == modal) {
-      modal.style.display = "none";
+  if (event.target == logModal) {
+    logModal.style.display = "none";
+  } else if (event.target == systemModal) {
+    systemModal.style.display = "none";
   }
 };
 
+systemButton.addEventListener("click", () => {
+  systemModal.style.display = "block";
+  botApp.getSystemMessage().then(message =>{
+    systemTextArea.value = message;
+  })
+});
+
+submitBtn.onclick = function() {
+  botApp.updateSystemMessage(systemTextArea.value).then(res=>{
+    systemModal.style.display = "none";
+  })
+}
+
 logsButton.addEventListener("click", () => {
-  modal.style.display = "block";
+  logModal.style.display = "block";
   displayLogs(logs)
 });
 

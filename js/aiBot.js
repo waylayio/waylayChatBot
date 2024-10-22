@@ -34,6 +34,19 @@ class GenAIBot {
       return aINode?.properties?.sensor?.requiredProperties?.find(a=>a["system"])?.system
     }
 
+    async updateSystemMessage(text) {
+      const template = await client.templates.get(this.template);
+      var aINode = template.nodes.find(node=> node.properties.sensor && node.properties.sensor.requiredProperties.find(a=>a["system"] !== undefined))
+      if(aINode){
+        var properties = aINode.properties.sensor.requiredProperties.filter(v => !v.system)
+        properties.push({system: text})
+        aINode.properties.sensor.requiredProperties = properties
+      }
+      template.nodes = template.nodes.filter(n=> n.name != aINode.name)
+      template.nodes.push(aINode)
+      return await client.templates.update(template.name, template)
+    }
+
     async getAgents() {
       const template = await client.templates.get(this.template);
       const agents =  template.nodes.filter(a => a.properties.sensor?.requiredProperties?.find(b=>b.system) === undefined) //filter LLM node
