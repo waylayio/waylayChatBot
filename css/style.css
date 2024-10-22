@@ -52,8 +52,8 @@
   --color-fg-muted: #848d97;
   --color-fg-subtle: #6e7681;
   --color-canvas-default: #373839;
-  --color-canvas-subtle: #5b5a5a;
-  --color-border-default: #30363d;
+  --color-canvas-subtle: #444654;;
+  --color-border-default: #b3b3b3;
   --color-border-muted: #21262d;
   --color-neutral-muted: rgba(110, 118, 129, 0.4);
   --color-accent-fg: #2f81f7;
