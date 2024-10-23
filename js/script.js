@@ -475,9 +475,9 @@ window.onclick = function(event) {
 };
 
 systemButton.addEventListener("click", () => {
-  systemModal.style.display = "block";
   botApp.getSystemMessage().then(message =>{
     systemTextArea.value = message;
+    systemModal.style.display = "block";
   })
 });
 
@@ -491,8 +491,8 @@ submitBtn.onclick = function() {
 }
 
 logsButton.addEventListener("click", () => {
-  logModal.style.display = "block";
   displayLogs(logs)
+  logModal.style.display = "block";
 });
 
 searchInput.addEventListener('input', function() {
