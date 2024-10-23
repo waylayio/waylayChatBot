@@ -592,3 +592,35 @@ span.material-symbols-rounded {
   visibility: visible;
   opacity: 0.75;
 }
+
+.menu {
+  display: none;
+  position: fixed;
+  bottom: 70px;
+  right: 1%;
+  color: var(--text-color);
+  background-color: var(--outgoing-chat-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.menu ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu li {
+  padding: 15px;
+  border-bottom: 1px solid #444;
+  cursor: pointer;
+}
+
+.menu li:hover {
+  background-color: var(--icon-hover-bg);
+}
+
+.menu li:last-child {
+  border-bottom: none;
+}

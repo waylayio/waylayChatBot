@@ -18,6 +18,10 @@ const searchInput = document.getElementById("searchInput");
 const systemButton = document.querySelector("#system-btn");
 var systemTextArea = document.getElementById("systemTextArea");
 var submitBtn = document.getElementById("submitBtn");
+const menuIcon = document.getElementById('help');
+const menu = document.getElementById('menu');
+const menuItems = document.querySelectorAll('.menu li');
+
 
 let userText = null;
 const SpeechRecognition =
@@ -457,6 +461,20 @@ $('.icons').on('click', function () {
   id.toggle(350);
 });
 
+menuIcon.addEventListener('click', () => {
+  if (menu.style.display === 'none' || menu.style.display === '') {
+      menu.style.display = 'block';
+  } else {
+      menu.style.display = 'none';
+  }
+});
+
+
+menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+        menu.style.display = 'none';
+    });
+});
 
 closeModalBtn.onclick = function() {
   logModal.style.display = "none";
