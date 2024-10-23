@@ -84,7 +84,7 @@ function createCards(cards) {
     cardHeader.innerHTML = `
       <span class="material-symbols-rounded">${card.icon}</span>&nbsp;&nbsp; 
       ${card.title}
-      <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">${card.expandIcon}</span>
+      <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span>
     `;
 
     const ul = document.createElement('ul');
