@@ -592,12 +592,6 @@ $('#introFrame').fadeOut(4000, () => {
       tippy('#cards-btn', {
         content: 'Help'
       })
-      tippy('#logs-btn', {
-        content: 'Logs'
-      })
-      tippy('#system-btn', {
-        content: 'Prompt'
-      })
       tippy('#notifications-btn', {
         content: 'Stream alarms'
       })
