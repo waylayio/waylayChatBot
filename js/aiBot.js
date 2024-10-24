@@ -81,7 +81,8 @@ class GenAIBot {
         throw new Error("error running the bot, template failed to respond", error);
       } else if(ret.taskOutput === undefined) {
         this.reset()
-        throw new Error("error running the bot, I will reset the cache, please try again", error);
+        const errorMessage = ret?.log.filter(a=> a.level === "WARN").length > 0? ret.log.filter(a=> a.level === "WARN")[0].message : "error running the bot, I will reset the cache, please try again"
+        throw new Error(errorMessage, error);
       }
       const response = ret.taskOutput;
       const messages = response.messages || response.context?.messages
