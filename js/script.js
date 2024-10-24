@@ -501,10 +501,10 @@ systemButton.addEventListener("click", () => {
 
 submitBtn.onclick = function() {
   botApp.updateSystemMessage(systemTextArea.value).then(res=>{
-    //systemModal.style.display = "none";
-    alert("System message updated");
+    // systemModal.style.display = "none";
+    popup("System message updated");
   }).catch(err=>{
-    alert("Error updating the propmt: " + err)
+    popup("Error updating the propmt: " + err)
   })
 }
 
@@ -558,6 +558,11 @@ function highlightSearch(text) {
   });
 }
 
+
+function popup(message) {
+  $('#popup').html(message);  // Update the popup content with the message
+  $('#popup').fadeIn(500).delay(2000).fadeOut(500);  // Show the popup, then hide it
+}
 
 if($.urlParam('introImage')){
   document.getElementById('introImage').src = $.urlParam('introImage')

@@ -624,3 +624,19 @@ span.material-symbols-rounded {
 .menu li:last-child {
   border-bottom: none;
 }
+
+#popup {
+  display: none;
+  width: 300px;
+  padding: 20px;
+  background-color: #f1f1f1;
+  color: #333;
+  border: 1px solid #ccc;
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
