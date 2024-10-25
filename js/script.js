@@ -16,7 +16,7 @@ const searchInput = document.getElementById("searchInput");
 const systemButton = document.querySelector("#system-btn");
 var systemTextArea = document.getElementById("systemTextArea");
 var submitBtn = document.getElementById("submitBtn");
-const menuIcon = document.getElementById('help');
+const menuIcon = document.getElementById('settings');
 const menu = document.getElementById('menu');
 const menuItems = document.querySelectorAll('.menu li');
 const logModal = document.getElementById("logModal");
@@ -183,7 +183,7 @@ async function login(ops) {
   } catch (error) {
     throw new Error("error starting a bot", error);
   }
-  tippy('#help', {
+  tippy('#settings', {
     content: "Bot template: " + botApp.getTemplate()
   });
 }
@@ -260,7 +260,7 @@ const getChatResponse = async (incomingChatDiv) => {
     incomingChatDiv.querySelector(".typing-animation").remove();
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    tippy('#help', {
+    tippy('#settings', {
       content: "Bot template: " + botApp.getTemplate()
     });
   }
