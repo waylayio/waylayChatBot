@@ -501,7 +501,7 @@ systemButton.addEventListener("click", () => {
 
 submitBtn.onclick = function() {
   botApp.updateSystemMessage(systemTextArea.value).then(res=>{
-    // systemModal.style.display = "none";
+    systemModal.style.display = "none";
     popup("System message updated");
   }).catch(err=>{
     popup("Error updating the propmt: " + err)
