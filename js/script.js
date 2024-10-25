@@ -8,8 +8,6 @@ const cardsButton = document.querySelector("#cards-btn");
 const logsButton = document.querySelector("#logs-btn");
 const cardContainer = $(".card-container");
 const cardsContainerEl = document.getElementById('card-container');
-const logModal = document.getElementById("logModal");
-const systemModal = document.getElementById("systemModal");
 const openModalBtn = document.getElementById("openModalBtn");
 const logList = document.getElementById("logList");
 const closeModalBtn = document.getElementById("close-log");
@@ -21,7 +19,8 @@ var submitBtn = document.getElementById("submitBtn");
 const menuIcon = document.getElementById('help');
 const menu = document.getElementById('menu');
 const menuItems = document.querySelectorAll('.menu li');
-
+const logModal = document.getElementById("logModal");
+const systemModal = document.getElementById("systemModal");
 
 let userText = null;
 const SpeechRecognition =
@@ -34,7 +33,7 @@ const SpeechRecognitionEvent =
 const speachEnabled = SpeechRecognition && SpeechRecognitionEvent
 var recognition, ruleSet, client, linkParser;
 
-
+const FADE = 350
 var chatMessages = [];
 var currentIndex = -1;
 var eventSource;
@@ -443,11 +442,11 @@ cardsButton.addEventListener("click", () => {
   var icon = $('#cards-btn');
   icon.toggleClass('up');
   if (icon.hasClass('up')) {
-    cardContainer.fadeOut(350)
+    cardContainer.fadeOut(FADE)
     icon.text('live_help');
   } else {
     icon.text('help_center');
-    cardContainer.fadeIn(350)
+    cardContainer.fadeIn(FADE)
   }
 });
 
@@ -458,7 +457,7 @@ $('.icons').on('click', function () {
   } else {
     $(this).text('expand_more')
   }
-  id.toggle(350);
+  id.toggle(FADE);
 });
 
 menuIcon.addEventListener('click', () => {
@@ -471,37 +470,38 @@ menuIcon.addEventListener('click', () => {
 
 
 menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-        menu.style.display = 'none';
-    });
+  item.addEventListener('click', () => {
+      menu.style.display = 'none';
+  });
 });
 
 closeModalBtn.onclick = function() {
-  logModal.style.display = "none";
+  $('#logModal').fadeOut(FADE)
 };
 
 closeSysModalBtn.onclick = function() {
-  systemModal.style.display = "none";
+  $('#systemModal').fadeOut(FADE)
 };
 
 window.onclick = function(event) {
   if (event.target == logModal) {
-    logModal.style.display = "none";
+    $('#logModal').fadeOut(FADE)
   } else if (event.target == systemModal) {
-    systemModal.style.display = "none";
+    $('#systemModal').fadeOut(FADE)
   }
 };
 
 systemButton.addEventListener("click", () => {
   botApp.getSystemMessage().then(message =>{
     systemTextArea.value = message;
-    systemModal.style.display = "block";
+    $('#systemModal').fadeIn(FADE)
   })
 });
 
 submitBtn.onclick = function() {
   botApp.updateSystemMessage(systemTextArea.value).then(res=>{
     systemModal.style.display = "none";
+    $('#systemModal').fadeIn(FADE)
     popup("System message updated");
   }).catch(err=>{
     popup("Error updating the propmt: " + err)
@@ -510,7 +510,7 @@ submitBtn.onclick = function() {
 
 logsButton.addEventListener("click", () => {
   displayLogs(logs)
-  logModal.style.display = "block";
+  $('#logModal').fadeIn(FADE)
 });
 
 searchInput.addEventListener('input', function() {
@@ -560,8 +560,8 @@ function highlightSearch(text) {
 
 
 function popup(message) {
-  $('#popup').html(message);  // Update the popup content with the message
-  $('#popup').fadeIn(500).delay(2000).fadeOut(500);  // Show the popup, then hide it
+  $('#popup').html(message);
+  $('#popup').fadeIn(500).delay(2000).fadeOut(500);
 }
 
 if($.urlParam('introImage')){
