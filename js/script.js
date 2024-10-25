@@ -45,19 +45,20 @@ if (speachEnabled) {
   recognition = new SpeechRecognition();
   var speechRecognitionList = new SpeechGrammarList();
   recognition.grammars = speechRecognitionList;
-  recognition.continuous = false;
+  recognition.continuous = true;
   recognition.lang = 'en-US';
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
   recognition.custom_grammar = ['task', 'alarm'];
   recognition.onresult = (event) => {
-    const text = event.results[0][0].transcript;
+    const text = event.results[event.results.length-1][0].transcript;
     $("#chat-input").text(text);
     handleOutgoingChat(text);
   };
 
   recognition.onspeechend = () => {
-    recognition.stop();
+    // recognition.stop();
+    $("#record").css("color", "rgb(172, 172, 190)")
   };
 
 } else {
@@ -432,8 +433,10 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 $('#record').click(function () {
-  if (speachEnabled)
+  if (speachEnabled){
     recognition.start();
+    $("#record").css("color", "rgb(0, 170, 0)")
+  }
 });
 
 sendButton.addEventListener("click", handleOutgoingChat);
