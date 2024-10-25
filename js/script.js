@@ -494,8 +494,8 @@ window.onclick = function(event) {
 $('#systemTextArea').on('input', function() {
   this.style.height = 'auto';
   this.style.height = (this.scrollHeight) + 'px';
-  var modalHeight = $('#systemModal').outerHeight();
-  $('#systemModal').css('height', modalHeight + 'px');
+  var modalHeight = $('#systemModal-c').outerHeight();
+  $('#systemModal-c').css('height', modalHeight + 'px');
 });
 
 systemButton.addEventListener("click", () => {
