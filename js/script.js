@@ -21,6 +21,7 @@ const menu = document.getElementById('menu');
 const menuItems = document.querySelectorAll('.menu li');
 const logModal = document.getElementById("logModal");
 const systemModal = document.getElementById("systemModal");
+const systemModalc = document.getElementById("systemModal-c");
 
 let userText = null;
 const SpeechRecognition =
@@ -500,17 +501,15 @@ window.onclick = function(event) {
   }
 };
 
-$('#systemTextArea').on('input', function() {
-  this.style.height = 'auto';
-  this.style.height = (this.scrollHeight) + 'px';
-  var modalHeight = $('#systemModal-c').outerHeight();
-  $('#systemModal-c').css('height', modalHeight + 'px');
-});
 
 systemButton.addEventListener("click", () => {
   botApp.getSystemMessage().then(message =>{
     systemTextArea.value = message;
-    $('#systemModal').fadeIn(FADE)
+    systemModal.style.display = 'block'
+    systemTextArea.style.height = 'auto';
+    systemTextArea.style.height = `${systemTextArea.scrollHeight}px`;
+    systemModalc.style.width = `${systemTextArea.scrollWidth}px`;
+    systemModalc.style.height = `${systemTextArea.scrollHeight}px`;
   })
 });
 
