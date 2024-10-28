@@ -58,6 +58,7 @@ if (speachEnabled) {
 
   recognition.onspeechend = () => {
     // recognition.stop();
+    recognition.running = false
     $("#record").css("color", "rgb(172, 172, 190)")
   };
 
@@ -433,9 +434,14 @@ chatInput.addEventListener("keydown", (e) => {
 });
 
 $('#record').click(function () {
-  if (speachEnabled){
+  if (speachEnabled && !recognition.running){
     recognition.start();
+    recognition.running = true
     $("#record").css("color", "rgb(0, 170, 0)")
+  } else if (speachEnabled && recognition.running){
+    recognition.stop();
+    recognition.running = false
+    $("#record").css("color", "rgb(172, 172, 190)")
   }
 });
 
