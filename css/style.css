@@ -423,7 +423,8 @@ span.material-symbols-rounded {
 }
 
 .card {
-  background-color: #fff;
+  color: var(--text-color);
+  background-color: var(--outgoing-chat-bg);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
