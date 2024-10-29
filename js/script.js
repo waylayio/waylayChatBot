@@ -269,8 +269,9 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
-      logs = response.logs.filter(log => {
-        return !log.message.toLowerCase().includes("descriptor".toLowerCase())
+      logs = response.fullReply.map( log => {
+        const { content, role, ...newObject } = log;
+        return {content, role, rest: JSON.stringify(newObject)}
       })
       const res = linkParser.parse(marked.parse(response.lastReplyMessage))
       if(res.iframe){
@@ -501,7 +502,6 @@ window.onclick = function(event) {
   }
 };
 
-
 systemButton.addEventListener("click", () => {
   botApp.getSystemMessage().then(message =>{
     systemTextArea.value = message;
@@ -538,9 +538,9 @@ function displayLogs(logsToDisplay) {
   logsToDisplay.forEach(log => {
       const listItem = document.createElement("li");
       listItem.innerHTML = `
-          <span class="time">Time:</span> ${log.time}<br>
-          <span class="level">Level:</span> ${log.level}<br>
-          <span class="message">Message:</span> <span class="logs">${log.message}</span>
+          <span class="time">Role:</span> ${log.role}<br>
+          <span class="level">Content:</span> ${log.content}<br>
+          <span class="message">Rest:</span> <span class="logs">${log.rest}</span>
       `;
       logList.appendChild(listItem);
   });

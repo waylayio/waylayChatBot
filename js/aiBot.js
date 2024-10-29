@@ -95,7 +95,6 @@ class GenAIBot {
       return {
         fullReply: this.fullReply,
         lastReplyMessage: this.lastReplyMessage,
-        logs: ret.log,
         question
       }
     }
