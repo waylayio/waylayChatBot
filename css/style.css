@@ -194,7 +194,7 @@ body {
 
 .chat .chat-content {
   display: flex;
-  max-width: 1200px;
+  max-width: 90%;
   width: 100%;
   align-items: flex-start;
   justify-content: space-between;
@@ -227,6 +227,7 @@ span.material-symbols-rounded {
   align-self: flex-start;
   object-fit: cover;
   border-radius: 2px;
+  border-radius: 30%;
 }
 
 .chat .chat-details p {
