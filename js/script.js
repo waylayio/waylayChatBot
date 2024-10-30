@@ -57,10 +57,21 @@ if (speachEnabled) {
     handleOutgoingChat(text);
   };
 
+  recognition.onerror = function(event) {
+    console.error("Error occurred in recognition: " + event.error);
+    recognition.stop();
+    setTimeout(() => recognition.start(), 500);
+  };
+
   recognition.onspeechend = () => {
-    // recognition.stop();
-    recognition.running = false
-    $("#record").css("color", "rgb(172, 172, 190)")
+    recognition.stop();
+    if(recognition.running){
+      setTimeout(() => recognition.start(), 500);
+    }
+    // else {
+    //   recognition.stop();
+    //   $("#record").css("color", "rgb(172, 172, 190)")
+    // }
   };
 
 } else {
