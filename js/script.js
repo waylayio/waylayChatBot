@@ -157,6 +157,7 @@ function createAgentCards(agents) {
     });
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
+    $(".card-content").hide()
 }
 
 function connectAlarms() {
