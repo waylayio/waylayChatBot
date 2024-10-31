@@ -120,7 +120,6 @@ function createCards(cards) {
 
       ul.appendChild(li);
     });
-
     cardContent.appendChild(cardHeader);
     cardContent.appendChild(ul);
     cardHeader.addEventListener('click', () => {
@@ -130,6 +129,7 @@ function createCards(cards) {
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
   });
+  $(".card-content").hide()
 }
 
 function createAgentCards(agents) {
