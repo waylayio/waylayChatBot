@@ -13,7 +13,7 @@ const closeSysModalBtn = document.getElementById("close-sys");
 const searchInput = document.getElementById("searchInput");
 const systemButton = document.querySelector("#system-btn");
 var systemTextArea = document.getElementById("systemTextArea");
-var submitBtn = document.getElementById("submitBtn");
+const submitBtn = document.getElementById("submitBtn");
 const menuIcon = document.getElementById('settings');
 const menu = document.getElementById('menu');
 const menuItems = document.querySelectorAll('.menu li');
@@ -66,10 +66,6 @@ if (speachEnabled) {
     if(recognition.running){
       setTimeout(() => recognition.start(), 500);
     }
-    // else {
-    //   recognition.stop();
-    //   $("#record").css("color", "rgb(172, 172, 190)")
-    // }
   };
 
 } else {
@@ -210,10 +206,6 @@ const loadDataFromLocalstorage = () => {
 
   document.body.classList.toggle("light-mode", themeColor === "light_mode");
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-  // const markdownBodies = document.querySelectorAll('.markdown-body');
-  // markdownBodies.forEach(element => 
-  //   element.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark") )
-
   const defaultText = `<div class="squeeze-and-disappear default-text">
                             <h1>Waylay iBot</h1>
                             <p>Start a conversation and explore the power of AI.<br> Waylay research lab</p>
@@ -231,10 +223,6 @@ themeButton.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
   localStorage.setItem("themeColor", themeButton.innerText);
   themeButton.innerText = document.body.classList.contains("light-mode") ? "dark_mode" : "light_mode";
-
-  // const markdownBodies = document.querySelectorAll('.markdown-body');
-  // markdownBodies.forEach(element => 
-  //   element.setAttribute('data-theme', document.body.classList.contains("light-mode") ? "light" : "dark") )
 });
 
 const createChatElement = (content, className) => {
@@ -571,7 +559,6 @@ function highlightSearch(text) {
   });
 }
 
-
 function popup(message) {
   $('#popup').html(message);
   $('#popup').fadeIn(500).delay(2000).fadeOut(500);
@@ -588,7 +575,6 @@ function getGravatar(email) {
   const hash = md5(cleanEmail);
   return `https://www.gravatar.com/avatar/${hash}`;
 }
-
 
 //MAIN
 $('#introFrame').fadeOut(4000, () => {
