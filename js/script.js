@@ -220,7 +220,11 @@ const loadDataFromLocalstorage = () => {
                         </div>`
 
   chatContainer.innerHTML = localStorage.getItem("all-chats") || defaultText;
-  chatContainer.scrollTo(0, chatContainer.scrollHeight); // Scroll to bottom of the chat container
+  chatContainer.scrollTo(0, chatContainer.scrollHeight);
+  const reply = localStorage.getItem('fullReply') 
+  if (reply) {
+    botApp.fullReply = JSON.parse(reply)
+  }
 }
 
 themeButton.addEventListener("click", () => {
@@ -284,6 +288,7 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
+      localStorage.setItem('fullReply', JSON.stringify(response.fullReply))
       logs = response.fullReply.map( log => {
         const { content, role, ...newObject } = log;
         return {content, role, rest: JSON.stringify(newObject)}
@@ -587,11 +592,11 @@ function getGravatar(email) {
 
 //MAIN
 $('#introFrame').fadeOut(4000, () => {
-  loadDataFromLocalstorage();
   if ($.urlParam('token')) {
     boostrapTemplate = $.urlParam('template')
     login({ token: $.urlParam('token') }).then(response => {
       console.log("application loaded")
+      loadDataFromLocalstorage();
       client.me().then(me=>{
         document.getElementById("avatar").src = getGravatar(me.email);
         $("#avatar").fadeIn(FADE)
