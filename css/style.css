@@ -134,8 +134,17 @@ body {
   background: var(--outgoing-chat-bg);
 }
 
+.container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  transition: width 0.3s ease;
+}
+
+
 /* Chats container styling */
 .chat-container {
+  flex: 1;
   overflow-y: auto;
   max-height: 100vh;
   padding-bottom: 150px;
@@ -194,7 +203,7 @@ body {
 
 .chat .chat-content {
   display: flex;
-  max-width: 90%;
+  max-width: 1200px;
   width: 100%;
   align-items: flex-start;
   justify-content: space-between;
@@ -423,14 +432,52 @@ span.material-symbols-rounded {
   }
 }
 
+.sidebar {
+  width: 50px;
+  color: var(--text-color);
+  background-color: var(--outgoing-chat-bg);
+  transition: width 0.3s ease;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  width: 305px;
+}
+
+.sidebar-content {
+  padding: 20px;
+}
+
+.sidebar-content p {
+  margin-top: 10px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  color: var(--text-color);
+  background-color: var(--outgoing-chat-bg);
+  font-size: 24px;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.card-container {
+  margin-top: 50px;
+}
+
 .card {
   color: var(--text-color);
   background-color: var(--outgoing-chat-bg);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  margin: 20px;
-  width: 300px;
+  width: 350px;
 }
 
 .card img {
@@ -438,8 +485,12 @@ span.material-symbols-rounded {
   height: auto;
 }
 
+.card ul {
+  margin-left: 35px;
+}
+
 .card ul li {
-  font-size: 12px;
+  font-size: 13px;
   margin-left: 15px;
 }
 

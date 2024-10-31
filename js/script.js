@@ -4,9 +4,7 @@ const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
 const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
-const cardsButton = document.querySelector("#cards-btn");
 const logsButton = document.querySelector("#logs-btn");
-const cardContainer = $(".card-container");
 const cardsContainerEl = document.getElementById('card-container');
 const openModalBtn = document.getElementById("openModalBtn");
 const logList = document.getElementById("logList");
@@ -87,6 +85,15 @@ $.urlParam = function (name) {
   return decodeURI(results[1]) || 0;
 }
 
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  if(document.getElementById('sidebar').classList.contains('open')){
+    $(".card-content").show()  
+  } else {
+    $(".card-content").hide()
+  }
+}
+
 function createCards(cards) {
   cards.forEach(card => {
     const cardDiv = document.createElement('div');
@@ -96,9 +103,7 @@ function createCards(cards) {
     const cardHeader = document.createElement('h5');
     cardHeader.innerHTML = `
       <span class="material-symbols-rounded">${card.icon}</span>&nbsp;&nbsp; 
-      ${card.title}
-      <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span>
-    `;
+      ${card.title}`;
 
     const ul = document.createElement('ul');
     ul.style.display = 'none';
@@ -120,7 +125,6 @@ function createCards(cards) {
     cardHeader.addEventListener('click', () => {
       const isExpanded = ul.style.display === 'block';
       ul.style.display = isExpanded ? 'none' : 'block';
-      cardHeader.querySelector('.icons').textContent = isExpanded ? 'expand_more' : 'expand_less';
     });
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
@@ -136,8 +140,7 @@ function createAgentCards(agents) {
   const cardHeader = document.createElement('h5');
   cardHeader.innerHTML = `
     <span class="material-symbols-rounded">support_agent</span>&nbsp;&nbsp; 
-    Agents (${count})
-    <span class="material-symbols-rounded icons" style="position: absolute; right: 20px">expand_more</span>`;
+    Agents (${count})`;
     const ul = document.createElement('ul');
     ul.style.display = 'none';
     agents.forEach(agent => {
@@ -150,7 +153,6 @@ function createAgentCards(agents) {
     cardHeader.addEventListener('click', () => {
       const isExpanded = ul.style.display === 'block';
       ul.style.display = isExpanded ? 'none' : 'block';
-      cardHeader.querySelector('.icons').textContent = isExpanded ? 'expand_more' : 'expand_less';
     });
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
@@ -460,28 +462,6 @@ $('#record').click(function () {
 
 sendButton.addEventListener("click", handleOutgoingChat);
 
-cardsButton.addEventListener("click", () => {
-  var icon = $('#cards-btn');
-  icon.toggleClass('up');
-  if (icon.hasClass('up')) {
-    cardContainer.fadeOut(FADE)
-    icon.text('live_help');
-  } else {
-    icon.text('help_center');
-    cardContainer.fadeIn(FADE)
-  }
-});
-
-$('.icons').on('click', function () {
-  var id = $(this).closest('.card-content').find('ul')
-  if (id.is(':visible')) {
-    $(this).text('expand_less')
-  } else {
-    $(this).text('expand_more')
-  }
-  id.toggle(FADE);
-});
-
 menuIcon.addEventListener('click', () => {
   if (menu.style.display === 'none' || menu.style.display === '') {
       menu.style.display = 'block';
@@ -630,9 +610,6 @@ $('#introFrame').fadeOut(4000, () => {
       })
       tippy('#record', {
         content: 'Talk to bot'
-      })
-      tippy('#cards-btn', {
-        content: 'Help'
       })
       tippy('#notifications-btn', {
         content: 'Stream alarms'

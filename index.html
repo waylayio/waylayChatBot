@@ -18,8 +18,6 @@
   <div id="introFrame">
     <img id="introImage" style='height: 100%; width: 100%; object-fit: contain'>
   </div>
-  <div style="display:none; position: absolute; top: 40px; right: 10px; opacity: 0.9;" class="card-container" id="card-container">
-  </div>
         
   <div id="logModal" class="modal">
     <div class="modal-content log">
@@ -40,8 +38,19 @@
   </div>
   <div id="popup"></div>
 
-  <!-- Chats container -->
-  <div class="chat-container"></div>
+    
+  <div class="container">
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-content">
+        <div class="card-container" id="card-container"> </div>
+      </div>
+    </div>
+    <div class="toggle-btn" onclick="toggleSidebar()">☰</div>
+
+    <!-- Chats container -->
+    <div class="chat-container"></div>
+  </div>
+
   <!-- Typing container -->
   <div class="typing-container">
     <div class="typing-content">
@@ -54,7 +63,7 @@
         <span id="record" class="material-symbols-rounded">mic</span>
         <span id="delete-btn" class="material-symbols-rounded">delete</span>
         <span id="notifications-btn" class="material-symbols-rounded">notifications_active</span>
-        <span id="cards-btn" class="material-symbols-rounded up">live_help</span>
+        <!-- <span id="cards-btn" class="material-symbols-rounded up">live_help</span> -->
         <!-- <span id="logs-btn" class="material-symbols-rounded up">rule</span> -->
         <!-- <span id="system-btn" class="material-symbols-rounded up">speaker_notes</span> -->
       </div>
