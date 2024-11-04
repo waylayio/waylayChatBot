@@ -1,9 +1,11 @@
 class GenAIBot {
-    constructor(AIModel, client, template) {
+    constructor(AIModel, client, template, clientSessionFlag) {
       this.AIModel = AIModel;
       this.client = client;
       this.template = template;
       this.fullReply = []
+      //should bot be responsible for keeping client session history or not
+      this.clientSessionFlag =  clientSessionFlag;
       this.lastReplyMessage = "NA"
       this.lastQuestion = "NA";
     }
@@ -70,9 +72,14 @@ class GenAIBot {
     async runBot(question) {
       console.log('runBot', question);
       this.lastQuestion = question;
-      let ret
+      let ret, variables
       try{
-        ret = await client.templates.run(this.template, { variables: { question, messages: this.fullReply,  model: this.AIModel}})
+        if(this.clientSessionFlag) {
+          variables = { question, messages: this.fullReply,  model: this.AIModel}
+        } else {
+          variables = { question, model: this.AIModel}
+        }
+        ret = await client.templates.run(this.template, { variables })
       } catch(error){
         throw new Error("error running the bot, template failed to run", error);
       }

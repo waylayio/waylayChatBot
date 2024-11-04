@@ -189,9 +189,12 @@ async function login(ops) {
   const settings = await client.settings();
   const template = await client.templates.get(boostrapTemplate || settings.WoxTemplate || config.template || "WoxChat");
   console.log("template loaded", template);
+
+  // does template expexts clients to keep message sessions?
+  clientSession = template?.variables.filter(m => m.name === 'messages').length > 0
   const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
   try { 
-    botApp =  new GenAIBot(AIModel, client, template.name)
+    botApp =  new GenAIBot(AIModel, client, template.name, clientSession)
     botApp.getAgents().then(agents => createAgentCards(agents))
   } catch (error) {
     throw new Error("error starting a bot", error);
@@ -262,16 +265,26 @@ const getChatResponse = async (incomingChatDiv) => {
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
   } 
   else if (templateMessage) {
-    var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.getTemplate()
-    pElement.innerHTML = "<p>set bot to: " + _template+ "</p>"
-    botApp.template = _template
-    botApp.reset()
-    incomingChatDiv.querySelector(".typing-animation").remove();
-    incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
-    chatContainer.scrollTo(0, chatContainer.scrollHeight);
-    tippy('#settings', {
-      content: "Bot template: " + botApp.getTemplate()
-    });
+    try {
+      var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.getTemplate()
+      const template = await client.templates.get(_template);
+      clientSession = template?.variables.filter(m => m.name === 'messages').length > 0
+      pElement.innerHTML = "<p>set bot to: " + _template+ "</p>"
+      botApp.template = _template
+      botApp.clientSession = clientSession
+      botApp.reset()
+      incomingChatDiv.querySelector(".typing-animation").remove();
+      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+      chatContainer.scrollTo(0, chatContainer.scrollHeight);
+      tippy('#settings', {
+        content: "Bot template: " + botApp.getTemplate()
+      });
+    } catch(err){
+      showError("Bot can't be loaded ")
+      incomingChatDiv.querySelector(".typing-animation").remove();
+      incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
+      chatContainer.scrollTo(0, chatContainer.scrollHeight);
+    }
   }
   else {
     try {
