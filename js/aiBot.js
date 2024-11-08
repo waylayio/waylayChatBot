@@ -21,11 +21,11 @@ class GenAIBot {
 
     reset() {
       this.fullReply = []
-      this.sessionId = generateUUID()
+      this.sessionId = this.generateUUID()
     }
     
     setSessionId () {
-      this.sessionId = generateUUID()
+      this.sessionId = this.generateUUID()
     }
 
     getSessionId() {
