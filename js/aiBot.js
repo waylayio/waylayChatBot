@@ -1,19 +1,37 @@
 class GenAIBot {
     constructor(AIModel, client, template, clientSessionFlag) {
-      this.AIModel = AIModel;
-      this.client = client;
-      this.template = template;
+      this.AIModel = AIModel
+      this.client = client
+      this.template = template
       this.fullReply = []
       //should bot be responsible for keeping client session history or not
-      this.clientSessionFlag =  clientSessionFlag;
+      this.clientSessionFlag =  clientSessionFlag
       this.lastReplyMessage = "NA"
-      this.lastQuestion = "NA";
+      this.lastQuestion = "NA"
+      this.sessionId = this.generateUUID()
+    }
+
+     generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = Math.random() * 16 | 0;
+          const v = c === 'x' ? r : (r & 0x3 | 0x8);
+          return v.toString(16);
+      })
     }
 
     reset() {
       this.fullReply = []
+      this.sessionId = generateUUID()
     }
     
+    setSessionId () {
+      this.sessionId = generateUUID()
+    }
+
+    getSessionId() {
+      return this.sessionId
+    }
+
     getLastQuestion() {
         return this.lastQuestion;
     }
@@ -77,7 +95,7 @@ class GenAIBot {
         if(this.clientSessionFlag) {
           variables = { question, messages: this.fullReply,  model: this.AIModel}
         } else {
-          variables = { question, model: this.AIModel}
+          variables = { question, sessionId: this.sessionId, model: this.AIModel}
         }
         ret = await client.templates.run(this.template, { variables })
       } catch(error){
@@ -93,9 +111,13 @@ class GenAIBot {
       }
       const response = ret.taskOutput;
       const messages = response.messages || response.context?.messages
-      if(messages.length > 1) {
+      const signleResponse = response.response
+      if(messages?.length > 1) {
         this.fullReply = messages;
         this.lastReplyMessage = this._extractMessageText(messages[messages.length - 1])
+      } else if(signleResponse) {
+        this.lastReplyMessage = signleResponse.content
+        this.fullReply.push(signleResponse)
       } else {
         throw new Error("error running the bot, there are no messages in the response", error);
       }

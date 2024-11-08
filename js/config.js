@@ -1,7 +1,6 @@
 const config = {
   template: 'WoxChat',
   AIModel: 'gpt-4o',  
-  bufferSize: 200,
   DEBUG: true,
   PROD_GATEWAY: "https://api.waylay.io",
   PROD_CONSOLE: "https://console.waylay.io",

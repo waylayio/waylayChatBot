@@ -267,11 +267,10 @@ const getChatResponse = async (incomingChatDiv) => {
   else if (templateMessage) {
     try {
       var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.getTemplate()
-      const template = await client.templates.get(_template);
-      clientSession = template?.variables.filter(m => m.name === 'messages').length > 0
+      //test if the template exist
+      await client.templates.get(_template);
       pElement.innerHTML = "<p>set bot to: " + _template+ "</p>"
       botApp.template = _template
-      botApp.clientSession = clientSession
       botApp.reset()
       incomingChatDiv.querySelector(".typing-animation").remove();
       incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
