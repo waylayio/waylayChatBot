@@ -216,10 +216,10 @@ const loadDataFromLocalstorage = () => {
 
   chatContainer.innerHTML = localStorage.getItem("all-chats") || defaultText;
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  const reply = localStorage.getItem('fullReply') 
-  if (reply) {
-    botApp.fullReply = JSON.parse(reply)
-  }
+  // const reply = localStorage.getItem('fullReply') 
+  // if (reply) {
+  //   botApp.fullReply = JSON.parse(reply)
+  // }
 }
 
 themeButton.addEventListener("click", () => {
@@ -288,7 +288,7 @@ const getChatResponse = async (incomingChatDiv) => {
   else {
     try {
       const response = await botApp.runBot(userText)
-      localStorage.setItem('fullReply', JSON.stringify(response.fullReply))
+      //localStorage.setItem('fullReply', JSON.stringify(response.fullReply))
       logs = response.fullReply.map( log => {
         const { content, role, ...newObject } = log;
         return {content, role, rest: JSON.stringify(newObject)}
