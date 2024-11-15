@@ -1,1 +1,1 @@
-scripts to test different scenatios using voice or simple type these in the bot. 
+scripts to test different scenarios using voice or simple type these in the bot. 
