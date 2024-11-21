@@ -8,21 +8,20 @@ class GenAIBot {
       this.clientSessionFlag =  clientSessionFlag
       this.lastReplyMessage = "NA"
       this.lastQuestion = "NA"
-      this.sessionId = this.generateUUID(template)
+      this.sessionId = template + this.generateUUID()
     }
 
-     generateUUID(template) {
-      const uuid =   'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-          const r = Math.random() * 16 | 0;
-          const v = c === 'x' ? r : (r & 0x3 | 0x8);
-          v.toString(16);
-      })
-      return template + "_" + uuid
+    generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = (Math.random() * 16) | 0;
+          const v = c === 'x' ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+      });
     }
 
     reset() {
       this.fullReply = []
-      this.sessionId = this.generateUUID(this.template)
+      this.sessionId = this.template + this.generateUUID()
     }
     
     getSessionId() {
