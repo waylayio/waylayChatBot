@@ -4,6 +4,7 @@ const chatContainer = document.querySelector(".chat-container");
 const themeButton = document.querySelector("#theme-btn");
 const notificationButtom = document.querySelector("#notifications-btn");
 const deleteButton = document.querySelector("#delete-btn");
+const pdfButton = document.querySelector("#pdf-btn");
 const logsButton = document.querySelector("#logs-btn");
 const cardsContainerEl = document.getElementById('card-container');
 const openModalBtn = document.getElementById("openModalBtn");
@@ -221,6 +222,70 @@ const loadDataFromLocalstorage = () => {
   //   botApp.fullReply = JSON.parse(reply)
   // }
 }
+
+pdfButton.addEventListener("click", () => {
+  const { jsPDF } = window.jspdf;
+  const A4_HEIGHT = 841.89;
+  const A4_WIDTH = 595.28;
+
+  const WIDTH_MARGIN = 10;
+  const HEIGHT_MARGIN = 10;
+  const PAGE_HEIGHT = A4_HEIGHT - 2 * HEIGHT_MARGIN;
+
+  const pdf = new jsPDF('p', 'pt', 'a4');  // orientation, unit, format
+  const el =  document.getElementById('content')
+  html2canvas(el, {
+    allowTaint: true,
+    useCORS: true,
+    height: el.scrollHeight,
+    scrollX: -window.scrollX,
+    scrollY: -window.scrollY,
+  }).then(canvas =>{
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    const imgWidth = A4_WIDTH - 2 * WIDTH_MARGIN; 
+    const imgHeight = (imgWidth / canvasWidth) * canvasHeight;
+
+    const pageImg = canvas.toDataURL('image/png', 1.0);
+
+    let position = HEIGHT_MARGIN;
+    if (imgHeight > PAGE_HEIGHT) {  // need multi page pdf
+      let heightUnprinted = imgHeight;
+      while (heightUnprinted > 0) {
+        pdf.addImage(
+            pageImg,
+            'PNG',
+            WIDTH_MARGIN,
+            position,
+            imgWidth,
+            imgHeight
+        );
+
+        pdf.setFillColor(255, 255, 255);
+        pdf.rect(0, 0, A4_WIDTH, HEIGHT_MARGIN, 'F'); // margin top
+        pdf.rect(0, A4_HEIGHT - HEIGHT_MARGIN, A4_WIDTH, HEIGHT_MARGIN, 'F'); // margin bottom 
+          
+        heightUnprinted -= PAGE_HEIGHT;  
+        position -= PAGE_HEIGHT; // next vertical placement
+        
+        if (heightUnprinted > 0) pdf.addPage();
+      }
+    } else {
+      const pageImg = canvas.toDataURL('image/png', 1.0);
+      const usedHeight = HEIGHT_MARGIN;
+      pdf.addImage(
+        pageImg,      // img DataUrl
+        'PNG',
+        WIDTH_MARGIN, // x - position against the left edge of the page
+        usedHeight,   // y - position against the upper edge of the page
+        imgWidth,
+        imgHeight,
+      );
+    }
+    pdf.save('Waylay-Chat.pdf');
+    });
+})
 
 themeButton.addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
@@ -618,6 +683,9 @@ $('#introFrame').fadeOut(4000, () => {
       })
       tippy('#notifications-btn', {
         content: 'Stream alarms'
+      })
+      tippy('#pdf-btn', {
+        content: 'Export to PDF'
       })
     }).catch(error => {
       showError("Bot not loaded " + error)
