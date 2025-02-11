@@ -85,7 +85,7 @@ $.urlParam = function (name) {
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
   if(document.getElementById('sidebar').classList.contains('open')){
-    $(".card-content").show()  
+    $(".card-content").show()
   } else {
     $(".card-content").hide()
   }
@@ -109,7 +109,7 @@ function createCards(cards) {
       const li = document.createElement('li');
       li.textContent = query;
       li.addEventListener('click', (e) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         console.log(query);
         $("#chat-input").text(query);
         handleOutgoingChat(query);
@@ -184,7 +184,7 @@ async function login(ops) {
   await client.tasks.list().catch(err =>
     {
       client.gateway = config.DEV_GATEWAY
-      client.console = config.DEV_CONSOLE 
+      client.console = config.DEV_CONSOLE
     })
   linkParser = new LinkParser(client)
   const settings = await client.settings();
@@ -194,7 +194,7 @@ async function login(ops) {
   // does template expexts clients to keep message sessions?
   clientSession = template?.variables.filter(m => m.name === 'messages').length > 0
   const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
-  try { 
+  try {
     botApp =  new GenAIBot(AIModel, client, template.name, clientSession)
     botApp.getAgents().then(agents => createAgentCards(agents))
   } catch (error) {
@@ -203,6 +203,12 @@ async function login(ops) {
   tippy('#settings', {
     content: "Bot template: " + botApp.getTemplate()
   });
+
+  const dashboard = new Dashboard(client)
+  let resources = await dashboard.getResources()
+  let posMarkers = resources.map(res => ({id:res.id, lat:res.latitude, lng: res.longitude}))
+
+  console.log(resources)
 }
 
 const loadDataFromLocalstorage = () => {
@@ -217,7 +223,7 @@ const loadDataFromLocalstorage = () => {
 
   chatContainer.innerHTML = localStorage.getItem("all-chats") || defaultText;
   chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  // const reply = localStorage.getItem('fullReply') 
+  // const reply = localStorage.getItem('fullReply')
   // if (reply) {
   //   botApp.fullReply = JSON.parse(reply)
   // }
@@ -244,7 +250,7 @@ pdfButton.addEventListener("click", () => {
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
 
-    const imgWidth = A4_WIDTH - 2 * WIDTH_MARGIN; 
+    const imgWidth = A4_WIDTH - 2 * WIDTH_MARGIN;
     const imgHeight = (imgWidth / canvasWidth) * canvasHeight;
 
     const pageImg = canvas.toDataURL('image/png', 1.0);
@@ -264,11 +270,11 @@ pdfButton.addEventListener("click", () => {
 
         pdf.setFillColor(255, 255, 255);
         pdf.rect(0, 0, A4_WIDTH, HEIGHT_MARGIN, 'F'); // margin top
-        pdf.rect(0, A4_HEIGHT - HEIGHT_MARGIN, A4_WIDTH, HEIGHT_MARGIN, 'F'); // margin bottom 
-          
-        heightUnprinted -= PAGE_HEIGHT;  
+        pdf.rect(0, A4_HEIGHT - HEIGHT_MARGIN, A4_WIDTH, HEIGHT_MARGIN, 'F'); // margin bottom
+
+        heightUnprinted -= PAGE_HEIGHT;
         position -= PAGE_HEIGHT; // next vertical placement
-        
+
         if (heightUnprinted > 0) pdf.addPage();
       }
     } else {
@@ -328,7 +334,7 @@ const getChatResponse = async (incomingChatDiv) => {
     incomingChatDiv.querySelector(".typing-animation").remove();
     incomingChatDiv.querySelector(".chat-details").appendChild(pElement);
     chatContainer.scrollTo(0, chatContainer.scrollHeight);
-  } 
+  }
   else if (templateMessage) {
     try {
       var _template = userText.split(" ").length > 2 ? userText.split(" ")[2] : botApp.getTemplate()
@@ -362,7 +368,7 @@ const getChatResponse = async (incomingChatDiv) => {
       if(res.iframe){
         addIframe(incomingChatDiv.querySelector(".chat-content"),res.text)
       }
-      else 
+      else
         pElement.innerHTML = res.text
     } catch(error){
       pElement.classList.add("error");

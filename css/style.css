@@ -706,3 +706,11 @@ span.material-symbols-rounded {
   border-radius: 50%;
   display: none;
 }
+.container-wrapper{
+  display: flex;
+  flex-direction: column;
+}
+
+.canvas{
+  height: 66%;
+}
