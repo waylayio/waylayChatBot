@@ -132,14 +132,17 @@
 
 body {
   background: var(--outgoing-chat-bg);
+  height: 100vh;
 }
 
 .container {
   display: flex;
+  flex-direction: row;
   height: 100%;
   width: 100%;
   transition: width 0.3s ease;
 }
+
 
 
 /* Chats container styling */
@@ -147,6 +150,7 @@ body {
   flex: 1;
   overflow-y: auto;
   max-height: 100vh;
+  height: 100%;
   padding-bottom: 150px;
 }
 
@@ -207,6 +211,7 @@ body {
   width: 100%;
   align-items: flex-start;
   justify-content: space-between;
+  overflow: auto;
 }
 
 span.material-symbols-rounded {
@@ -228,6 +233,7 @@ span.material-symbols-rounded {
 .chat .chat-details {
   display: flex;
   align-items: center;
+  gap: 10px;
 }
 
 .chat .chat-details img {
@@ -434,6 +440,8 @@ span.material-symbols-rounded {
 
 .sidebar {
   width: 50px;
+  border-right: 1px solid var(--incoming-chat-border);
+  height: 100%;
   color: var(--text-color);
   background-color: var(--outgoing-chat-bg);
   transition: width 0.3s ease;
@@ -447,6 +455,8 @@ span.material-symbols-rounded {
 
 .sidebar-content {
   padding: 20px;
+  height: 100%;
+
 }
 
 .sidebar-content p {
@@ -470,6 +480,11 @@ span.material-symbols-rounded {
 
 .card-container {
   margin-top: 50px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .card {
@@ -477,7 +492,8 @@ span.material-symbols-rounded {
   background-color: var(--outgoing-chat-bg);
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 350px;
+  width: 100%;
+  height: auto;
 }
 
 .card img {
@@ -500,7 +516,9 @@ span.material-symbols-rounded {
 
 .card-content {
   padding: 5px;
+  width: 100%;
   font-family: Arial, sans-serif;
+  display: block;
 }
 
 .modal {
@@ -708,9 +726,40 @@ span.material-symbols-rounded {
 }
 .container-wrapper{
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
+
 }
 
 .canvas{
-  height: 66%;
+  height: 60%;
+  display: flex;
+  flex-direction: row;
+}
+.leftCanvas{
+  width: 60%;
+  height: 100%;
+}
+.rightCanvas{
+  width: 40%;
+  height: 100%;
+  display: flex;
+}
+.upperLeftCanvas{
+  height: 50%;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+.lowerLeftCanvas {
+  height: 50%;
+  display: flex;
+  flex-direction: row;
+}
+.resMap{
+  width: 85%;
+  height:85%;
+  justify-self: center;
+  align-self: center;
 }

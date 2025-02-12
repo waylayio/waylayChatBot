@@ -12,6 +12,9 @@
   <link rel='stylesheet' href='https://unpkg.com/tippy.js@6/dist/tippy.css'>
   <link rel='stylesheet' href='css/style.css' />
   <link rel='stylesheet' href='css/markdown.css' />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
 </head>
 
 <body>
@@ -41,22 +44,40 @@
 <div id='popup'></div>
 
 
+
 <div class='container' id='content'>
-  <div class='sidebar' id='sidebar'>
+  <div class='sidebar open' id='sidebar'>
     <div class='sidebar-content'>
+
       <div class='card-container' id='card-container'></div>
     </div>
   </div>
-  <div class='toggle-btn' onclick='toggleSidebar()'>☰</div>
+<!--  <div class='toggle-btn' onclick='toggleSidebar()'>☰</div>-->
   <div class='container-wrapper' id='container-wrapper'>
-    <div class='canvas' id='canvas'></div>
+    <!-- used for various charts -->
+    <div class='canvas' id='canvas'>
+      <div class='leftCanvas' id='leftCanvas'>
+        <div class='upperLeftCanvas' id='upperLeftCanvas'>
+
+        </div>
+        <div class='lowerLeftCanvas' id='lowerLeftCanvas'>
+
+        </div>
+      </div>
+      <div class='rightCanvas' id='rightCanvas'>
+        <div class='resMap' id='resMap'></div>
+      </div>
+    </div>
+
     <!-- Chats container -->
     <div class='chat-container'></div>
   </div>
+
 </div>
 
 <!-- Typing container -->
 <div class='typing-container'>
+
   <div class='typing-content'>
     <div class='typing-textarea'>
       <textarea id='chat-input' spellcheck='false' placeholder='Enter a prompt here' required></textarea>
@@ -92,6 +113,7 @@
 <script src='https://cdn.jsdelivr.net/npm/marked/marked.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js'></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src='https://unpkg.com/@popperjs/core@2'></script>
 <script src='https://unpkg.com/tippy.js@6'></script>
 <script src='js/config.js'></script>

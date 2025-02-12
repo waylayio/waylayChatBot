@@ -92,7 +92,7 @@ function toggleSidebar() {
 }
 
 function createCards(cards) {
-  $(".card-content").hide()
+  // $(".card-content").hide()
   cards.forEach(card => {
     const cardDiv = document.createElement('div');
     cardDiv.className = 'card';
@@ -100,11 +100,10 @@ function createCards(cards) {
     cardContent.className = 'card-content';
     const cardHeader = document.createElement('h5');
     cardHeader.innerHTML = `
-      <span class="material-symbols-rounded">${card.icon}</span>&nbsp;&nbsp; 
       ${card.title}`;
 
     const ul = document.createElement('ul');
-    ul.style.display = 'none';
+
     card.queries.forEach(query => {
       const li = document.createElement('li');
       li.textContent = query;
@@ -119,14 +118,10 @@ function createCards(cards) {
     });
     cardContent.appendChild(cardHeader);
     cardContent.appendChild(ul);
-    cardHeader.addEventListener('click', () => {
-      const isExpanded = ul.style.display === 'block';
-      ul.style.display = isExpanded ? 'none' : 'block';
-    });
     cardDiv.appendChild(cardContent);
     cardsContainerEl.appendChild(cardDiv);
   });
-  $(".card-content").hide()
+  $(".card-content").show()
 }
 
 function createAgentCards(agents) {
@@ -196,7 +191,7 @@ async function login(ops) {
   const AIModel = settings.AIModel || config.AIModel || 'gpt-4o'
   try {
     botApp =  new GenAIBot(AIModel, client, template.name, clientSession)
-    botApp.getAgents().then(agents => createAgentCards(agents))
+    // botApp.getAgents().then(agents => createAgentCards(agents))
   } catch (error) {
     throw new Error("error starting a bot", error);
   }
@@ -206,6 +201,7 @@ async function login(ops) {
 
   const dashboard = new Dashboard(client)
   let resources = await dashboard.getResources()
+          await dashboard.drawOnCanvas()
   let posMarkers = resources.map(res => ({id:res.id, lat:res.latitude, lng: res.longitude}))
 
   console.log(resources)
@@ -666,10 +662,10 @@ $('#introFrame').fadeOut(4000, () => {
     login({ token: $.urlParam('token') }).then(response => {
       console.log("application loaded")
       loadDataFromLocalstorage();
-      client.me().then(me=>{
+/*       client.me().then(me=>{
         document.getElementById("avatar").src = getGravatar(me.email);
         $("#avatar").fadeIn(FADE)
-      })
+      }) */
       if($.urlParam('cardData')) {
         client.resources.get($.urlParam('cardData')).then( cardData =>
           createCards(cardData.cards)
